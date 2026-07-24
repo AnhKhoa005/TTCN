@@ -50,6 +50,8 @@ Workshop](https://docs.geonode.org/en/master/usage/index.html).
 Quick Docker Start
 ------------------
 
+For a step-by-step local Docker guide, see [README-Docker.md](README-Docker.md).
+
   ```bash
     python create-envfile.py
   ```
