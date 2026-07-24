@@ -93,7 +93,7 @@ dependencies = [
     "djangorestframework==3.17.1",
     "djangorestframework-gis==1.2.1",
     "djangorestframework-guardian==0.3.0",
-    "drf-extensions==0.7.1",
+    "drf-extensions==0.8.0",
     "geonode-dynamic-rest==2.3.0.2",
     "geonode-pinax-notifications==6.0.0.3",
 
