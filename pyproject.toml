@@ -145,7 +145,7 @@ dependencies = [
     "flake8==7.3.0",
     "black==24.4.2",
     "pytest==8.4.2",
-    "pytest-bdd==7.1.2",
+    "pytest-bdd==8.1.0",
     "splinter==0.21.0",
     "pytest-splinter==3.3.2",
     "pytest-django==4.8.0",
