@@ -1,0 +1,147 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tài liệu - GeoNode WebGIS</title>
+<link href="{% static 'geonode/css/base.css' %}" rel="stylesheet"/>
+<link rel="stylesheet" href="{% static 'geonode/css/font-awesome.min.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { color-scheme: light; }
+  body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f4f6fb; color: #0f172a; }
+  a { text-decoration: none; }
+  .topbar { background: #1e3a5f; color: #fff; padding: 20px 0; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.75rem; color: #fff; letter-spacing: -0.01em; }
+  .brand i { color: #60a5fa; font-size: 1.9rem; }
+  .brand b { color: #60a5fa; }
+  .nav { display: flex; gap: 12px; align-items: center; }
+  .nav a { color: rgba(255,255,255,0.85); padding: 14px 24px; border-radius: 12px; font-size: 1.2rem; font-weight: 700; transition: all 0.15s; white-space: nowrap; }
+  .nav a i { font-size: 1.25rem; margin-right: 2px; }
+  .nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+  .nav a.active { background: #0d9488; color: #fff; }
+  .nav .back { color: #99f6e4; }
+  .herobanner { background: linear-gradient(135deg, #134e4a, #0d9488); color: #fff; padding: 44px 0; }
+  .herobanner h1 { font-family: 'Sora', 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; }
+  .herobanner p { opacity: 0.85; margin-top: 6px; }
+  .toolbar { padding: 20px 0 4px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .searchbox { flex: 1; min-width: 220px; position: relative; }
+  .searchbox input { width: 100%; padding: 11px 14px 11px 38px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; background: #fff; }
+  .searchbox i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+  .countline { padding: 12px 0; color: #64748b; font-size: 0.9rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; padding-bottom: 50px; }
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.15s, box-shadow 0.15s; display: flex; flex-direction: column; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,0.12); }
+  .thumb { height: 120px; background: linear-gradient(135deg,#ccfbf1,#f0fdfa); display: flex; align-items: center; justify-content: center; position: relative; }
+  .thumb .ph { font-size: 2.6rem; color: #5eead4; }
+  .thumb .ext { position: absolute; top: 10px; left: 10px; background: #0d9488; color: #fff; font-size: 0.7rem; padding: 3px 9px; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
+  .card-body { padding: 14px; display: flex; flex-direction: column; flex: 1; }
+  .card-body h3 { font-size: 1rem; font-weight: 700; color: #134e4a; }
+  .card-body .abs { font-size: 0.82rem; color: #64748b; line-height: 1.45; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 0.75rem; color: #94a3b8; }
+  .meta span { display: flex; align-items: center; gap: 4px; }
+  .card-foot { border-top: 1px solid #f1f5f9; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-end; margin-top: auto; }
+  .btn-open { background: #0d9488; color: #fff; padding: 7px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; }
+  .btn-open:hover { background: #0f766e; }
+  .foot { background: #042f2e; color: rgba(255,255,255,0.6); text-align: center; padding: 22px 0; font-size: 0.82rem; }
+  .foot b { color: #fff; }
+  .empty { text-align: center; padding: 60px 20px; color: #64748b; }
+  .empty i { font-size: 3rem; color: #cbd5e1; display: block; margin-bottom: 12px; }
+  .spinner { text-align: center; padding: 60px; color: #64748b; }
+  @media(max-width:640px){ .nav a span { display:none; } .herobanner h1{font-size:1.5rem;} }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="/"><i class="fa fa-globe"></i> Geo<b>Node</b></a>
+    <nav class="nav">
+      <a class="back" href="/"><i class="fa fa-home"></i></a>
+      <a href="/datasets"><i class="fa fa-database"></i> <span>Layers</span></a>
+      <a href="/maps"><i class="fa fa-map"></i> <span>Bản đồ</span></a>
+      <a href="/documents" class="active"><i class="fa fa-file-text-o"></i> <span>Tài liệu</span></a>
+    </nav>
+  </div>
+</div>
+
+<div class="herobanner">
+  <div class="container">
+    <h1>Tài liệu</h1>
+    <p>Kho tài liệu, báo cáo và dữ liệu hỗ trợ trên nền tảng GeoNode.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="toolbar">
+    <div class="searchbox">
+      <i class="fa fa-search"></i>
+      <input id="q" type="text" placeholder="Tìm kiếm tài liệu...">
+    </div>
+  </div>
+  <div class="countline" id="countline"></div>
+  <div id="grid" class="grid"><div class="spinner" style="grid-column:1/-1"><i class="fa fa-spinner fa-spin" style="font-size:2rem"></i><br>Đang tải...</div></div>
+</div>
+
+<div class="foot">© <span id="yr"></span> GeoNode <b>WebGIS</b> - Đồ án Phát triển ứng dụng Web GIS</div>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  const qEl = document.getElementById('q');
+  const grid = document.getElementById('grid');
+  const countline = document.getElementById('countline');
+  let all = [];
+
+  function esc(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+  function ext(name){ return (name||'').split('.').pop().toUpperCase().slice(0,6); }
+  function fIcon(name){
+    const e = (name||'').split('.').pop().toLowerCase();
+    if(e==='pdf') return 'fa-file-pdf-o';
+    if(['doc','docx'].includes(e)) return 'fa-file-word-o';
+    if(['xls','xlsx','csv'].includes(e)) return 'fa-file-excel-o';
+    if(['ppt','pptx'].includes(e)) return 'fa-file-powerpoint-o';
+    if(['zip','rar','7z'].includes(e)) return 'fa-file-archive-o';
+    if(['png','jpg','jpeg','gif','tif'].includes(e)) return 'fa-file-image-o';
+    return 'fa-file-text-o';
+  }
+
+  function render(){
+    let list = all.slice();
+    const q = qEl.value.trim().toLowerCase();
+    if(q){ list = list.filter(d => (d.title||'').toLowerCase().includes(q)); }
+    countline.textContent = 'Hiển thị ' + list.length + ' tài liệu';
+    if(!list.length){
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="fa fa-file-text-o"></i>Chưa có tài liệu nào'+
+        (q?'. Thử từ khóa khác.':'. Hãy tải lên tài liệu mới để bắt đầu.')+'</div>';
+      return;
+    }
+    grid.innerHTML = list.map(function(d){
+      const owner = (d.owner && d.owner.username) ? d.owner.username : 'unknown';
+      const detail = '/catalogue/#/document/' + (d.pk || d.id || '');
+      const thumb = d.thumbnail_url ? '<img src="'+esc(d.thumbnail_url)+'" alt="">' : '<div class="ph"><i class="fa '+fIcon(d.filename)+'"></i></div>';
+      return '<div class="card">'+
+        '<div class="thumb">'+thumb+'<span class="ext">'+esc(ext(d.filename))+'</span></div>'+
+        '<div class="card-body"><h3>'+esc(d.title)+'</h3>'+
+        '<div class="abs">'+esc(d.abstract||'Chưa có mô tả.')+'</div>'+
+        '<div class="meta"><span><i class="fa fa-user"></i>'+esc(owner)+'</span>'+
+        '<span><i class="fa fa-calendar"></i>'+esc((d.date||d.created||'').slice(0,10))+'</span></div></div>'+
+        '<div class="card-foot"><a class="btn-open" href="'+detail+'">Mở tài liệu <i class="fa fa-arrow-right"></i></a></div>'+
+      '</div>';
+    }).join('');
+  }
+
+  qEl.addEventListener('input', render);
+
+  fetch('/api/v2/documents/?page_size=100')
+    .then(r=>r.json())
+    .then(function(d){ all = d.documents||[]; render(); })
+    .catch(function(){ grid.innerHTML='<div class="empty" style="grid-column:1/-1"><i class="fa fa-exclamation-triangle"></i>Không thể tải dữ liệu.</div>'; });
+</script>
+</body>
+</html>

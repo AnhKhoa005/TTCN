@@ -1,0 +1,171 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layers - GeoNode WebGIS</title>
+<link href="{% static 'geonode/css/base.css' %}" rel="stylesheet"/>
+<link rel="stylesheet" href="{% static 'geonode/css/font-awesome.min.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { color-scheme: light; }
+  body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f4f6fb; color: #0f172a; }
+  a { text-decoration: none; }
+  .topbar { background: #1e3a5f; color: #fff; padding: 20px 0; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.75rem; color: #fff; letter-spacing: -0.01em; }
+  .brand i { color: #60a5fa; font-size: 1.9rem; }
+  .brand span b { color: #60a5fa; }
+  .nav { display: flex; gap: 12px; align-items: center; }
+  .nav a { color: rgba(255,255,255,0.85); padding: 14px 24px; border-radius: 12px; font-size: 1.2rem; font-weight: 700; transition: all 0.15s; white-space: nowrap; }
+  .nav a i { font-size: 1.25rem; margin-right: 2px; }
+  .nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+  .nav a.active { background: #2563eb; color: #fff; }
+  .nav .back { color: #bbd7ff; }
+  .herobanner { background: linear-gradient(135deg, #1e3a5f, #2563eb); color: #fff; padding: 44px 0; }
+  .herobanner h1 { font-family: 'Sora', 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; }
+  .herobanner p { opacity: 0.85; margin-top: 6px; }
+  .toolbar { padding: 20px 0 4px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .searchbox { flex: 1; min-width: 220px; position: relative; }
+  .searchbox input { width: 100%; padding: 11px 14px 11px 38px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; background: #fff; }
+  .searchbox i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+  select, .filter-btn { padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; background: #fff; cursor: pointer; }
+  .countline { padding: 12px 0; color: #64748b; font-size: 0.9rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; padding-bottom: 50px; }
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.15s, box-shadow 0.15s; display: flex; flex-direction: column; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,0.12); }
+  .thumb { height: 150px; background: linear-gradient(135deg,#dbeafe,#ecfdf5); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb .ph { font-size: 3rem; color: #93c5fd; }
+  .thumb .type { position: absolute; top: 10px; left: 10px; font-size: 0.7rem; padding: 3px 9px; border-radius: 20px; font-weight: 700; }
+  .type-vector { background:#dbeafe; color:#1d4ed8; }
+  .type-raster { background:#d1fae5; color:#047857; }
+  .card-body { padding: 14px; display: flex; flex-direction: column; flex: 1; }
+  .card-body h3 { font-size: 1rem; font-weight: 700; color: #1e3a5f; }
+  .card-body .name { font-size: 0.72rem; color: #2563eb; font-family: monospace; margin: 3px 0 8px; word-break: break-all; }
+  .card-body .abs { font-size: 0.82rem; color: #64748b; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 0.75rem; color: #94a3b8; }
+  .meta span { display: flex; align-items: center; gap: 4px; }
+  .card-foot { border-top: 1px solid #f1f5f9; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+  .btn-open { background: #2563eb; color: #fff; padding: 7px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; }
+  .btn-open:hover { background: #1d4ed8; }
+  .foot { background: #1e3a5f; color: rgba(255,255,255,0.6); text-align: center; padding: 22px 0; font-size: 0.82rem; }
+  .foot b { color: #fff; }
+  .spinner { text-align: center; padding: 60px; color: #64748b; }
+  .empty { text-align: center; padding: 60px 20px; color: #64748b; }
+  .empty i { font-size: 3rem; color: #cbd5e1; display: block; margin-bottom: 12px; }
+  @media(max-width:640px){ .nav a span { display:none; } .herobanner h1{font-size:1.5rem;} }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="/"><i class="fa fa-globe"></i> Geo<span><b>Node</b></span></a>
+    <nav class="nav">
+      <a class="back" href="/"><i class="fa fa-home"></i></a>
+      <a href="/datasets" class="active"><i class="fa fa-database"></i> <span>Layers</span></a>
+      <a href="/maps"><i class="fa fa-map"></i> <span>Bản đồ</span></a>
+      <a href="/documents"><i class="fa fa-file-text-o"></i> <span>Tài liệu</span></a>
+    </nav>
+  </div>
+</div>
+
+<div class="herobanner">
+  <div class="container">
+    <h1>Khám phá Layers</h1>
+    <p>Danh sách các lớp dữ liệu không gian trên nền tảng GeoNode.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="toolbar">
+    <div class="searchbox">
+      <i class="fa fa-search"></i>
+      <input id="q" type="text" placeholder="Tìm kiếm layer...">
+    </div>
+    <select id="typeFilter">
+      <option value="">Tất cả loại</option>
+      <option value="vector">Vector</option>
+      <option value="raster">Raster</option>
+    </select>
+    <select id="sortSel">
+      <option value="newest">Mới nhất</option>
+      <option value="title">Tên A-Z</option>
+      <option value="popular">Phổ biến</option>
+    </select>
+  </div>
+  <div class="countline" id="countline"></div>
+  <div id="grid" class="grid"><div class="spinner" style="grid-column:1/-1"><i class="fa fa-spinner fa-spin" style="font-size:2rem"></i><br>Đang tải dữ liệu...</div></div>
+</div>
+
+<div class="foot">© <span id="yr"></span> GeoNode <b>WebGIS</b> - Đồ án Phát triển ứng dụng Web GIS</div>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  let all = [];
+  const qEl = document.getElementById('q');
+  const typeEl = document.getElementById('typeFilter');
+  const sortEl = document.getElementById('sortSel');
+  const grid = document.getElementById('grid');
+  const countline = document.getElementById('countline');
+
+  function esc(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+  function render(){
+    let list = all.slice();
+    const q = qEl.value.trim().toLowerCase();
+    if(q){ list = list.filter(l => (l.title||'').toLowerCase().includes(q) || (l.alternate||'').toLowerCase().includes(q)); }
+    const t = typeEl.value;
+    if(t){ list = list.filter(l => l.type === t); }
+    const s = sortEl.value;
+    if(s==='title'){ list.sort((a,b)=>(a.title||'').localeCompare(b.title)); }
+    else if(s==='popular'){ list.sort((a,b)=>(b.popular_count||0)-(a.popular_count||0)); }
+    else { list.sort((a,b)=>(b.last_updated||b.created||'').localeCompare(a.last_updated||a.created||'')); }
+    countline.textContent = 'Hiển thị ' + list.length + ' layer';
+    if(!list.length){
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="fa fa-database"></i>Không tìm thấy layer nào</div>';
+      return;
+    }
+    grid.innerHTML = list.map(function(l){
+      const isRaster = (l.type==='raster');
+      const thumb = l.thumbnail_url ? '<img src="'+esc(l.thumbnail_url)+'" alt="">' : '<div class="ph"><i class="fa fa-'+(isRaster?'image':'map')+'"></i></div>';
+      const owner = (l.owner && l.owner.username) ? l.owner.username : 'unknown';
+      const detail = '/catalogue/#/dataset/' + (l.pk || l.id || '');
+      return '<div class="card">'+
+        '<div class="thumb">'+thumb+'<span class="type '+(isRaster?'type-raster':'type-vector')+'">'+(isRaster?'Raster':'Vector')+'</span></div>'+
+        '<div class="card-body"><h3>'+esc(l.title)+'</h3>'+
+        '<div class="name">'+esc(l.alternate||l.name)+'</div>'+
+        '<div class="abs">'+esc(l.raw_abstract && l.raw_abstract!=='No abstract provided'?l.raw_abstract:l.abstract||'Chưa có mô tả.')+'</div>'+
+        '<div class="meta"><span><i class="fa fa-user"></i>'+esc(owner)+'</span>'+
+        '<span><i class="fa fa-calendar"></i>'+esc((l.date||l.created||'').slice(0,10))+'</span>'+
+        '<span><i class="fa fa-download"></i>'+(l.popular_count||0)+'</span></div></div>'+
+        '<div class="card-foot"><span style="font-size:.72rem;color:#94a3b8">'+esc(l.srid||'EPSG:4326')+'</span>'+
+        '<a class="btn-open" href="'+detail+'">Mở layer <i class="fa fa-arrow-right"></i></a></div>'+
+      '</div>';
+    }).join('');
+  }
+
+  qEl.addEventListener('input', render);
+  typeEl.addEventListener('change', render);
+  sortEl.addEventListener('change', render);
+
+  fetch('/api/v2/datasets/?page_size=100')
+    .then(r=>r.json())
+    .then(function(d){
+      all = (d.datasets||[]).map(function(x){
+        let type='vector';
+        if(x.sourcetype==='coverage'||x.sourcetype==='remote'){ type='raster'; }
+        return Object.assign({}, x, { type: type });
+      });
+      render();
+    })
+    .catch(function(){ grid.innerHTML='<div class="empty" style="grid-column:1/-1"><i class="fa fa-exclamation-triangle"></i>Không thể tải dữ liệu. Vui lòng thử lại.</div>'; });
+</script>
+</body>
+</html>

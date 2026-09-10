@@ -1,4 +1,4 @@
-version: '3.9'
+# removed obsolete `version` key (Compose v2 uses no top-level `version`)
 
 # Common Django template for GeoNode and Celery services below
 x-common-django:
@@ -17,6 +17,11 @@ x-common-django:
     - backup-restore:/backup_restore
     - data:/data
     - tmp:/tmp
+    # --- Custom MapStore template overrides (persist across container recreate) ---
+    - ./templates/geonode-mapstore-client/index.html:/usr/src/venv/lib/python3.12/site-packages/geonode_mapstore_client/templates/index.html
+    - ./templates/geonode-mapstore-client/pages/datasets.html:/usr/src/venv/lib/python3.12/site-packages/geonode_mapstore_client/templates/geonode-mapstore-client/pages/datasets.html
+    - ./templates/geonode-mapstore-client/pages/maps.html:/usr/src/venv/lib/python3.12/site-packages/geonode_mapstore_client/templates/geonode-mapstore-client/pages/maps.html
+    - ./templates/geonode-mapstore-client/pages/documents.html:/usr/src/venv/lib/python3.12/site-packages/geonode_mapstore_client/templates/geonode-mapstore-client/pages/documents.html
   depends_on:
     db:
       condition: service_healthy
@@ -37,6 +42,7 @@ services:
       - IS_CELERY=False
     entrypoint: ["/usr/src/geonode/entrypoint.sh"]
     command: "uwsgi --ini /usr/src/geonode/uwsgi.ini"
+    
 
   # Celery worker that executes celery tasks created by Django.
   celery:
