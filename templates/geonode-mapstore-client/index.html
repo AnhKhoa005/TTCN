@@ -36,7 +36,8 @@
             /* Grid gọn, card đều nhau */
             .gn-arsha .services .service-item { width:100%; }
             .gn-arsha .services .service-item p { font-size:14.5px; line-height:1.65; }
-            .gn-arsha #services .row { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1.5rem; margin:0; }
+            .gn-arsha #services .row { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); grid-auto-rows:1fr; gap:1.5rem; margin:0; }
+            .gn-arsha #services .row::before, .gn-arsha #services .row::after { display:none; content:none; }
             .gn-arsha #services .row > div { padding:0; margin:0; max-width:none; width:100%; flex:none; }
             /* Card ngang gọn: icon trái, chữ phải */
             .gn-arsha #services .service-item { display:flex; gap:1rem; align-items:flex-start; text-align:left; padding:1.5rem 1.6rem; }
