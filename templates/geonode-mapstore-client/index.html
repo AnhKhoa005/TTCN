@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 {% load client_version %}
 {% load i18n %}
 <!DOCTYPE html>
@@ -27,6 +27,16 @@
             .gn-arsha .gn-hero-search .input-group-text { background:#fff; border:0; padding:.85rem 0 .85rem 1.2rem; }
             .gn-arsha .gn-hero-search .form-control { border:0; font-size:1rem; padding:.85rem 1rem .85rem 0; flex:1; }
             .gn-arsha .gn-hero-search .form-control:focus { outline:none; box-shadow:none; }
+            /* Font chữ rõ ràng, đồng bộ 3 trang listing */
+            .gn-arsha {
+                --arsha-default-font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+                --arsha-heading-font: 'Be Vietnam Pro', 'Inter', sans-serif;
+                --arsha-nav-font: 'Be Vietnam Pro', 'Inter', sans-serif;
+            }
+            /* Grid gọn, card đều nhau */
+            .gn-arsha .services .service-item { width:100%; }
+            .gn-arsha .services .service-item p { font-size:14.5px; line-height:1.65; }
+            .gn-arsha .section-title p { font-size:1rem; }
 
             .gn-stats-band { background:#fff; border-bottom:1px solid #e2e8f0; }
             .gn-stat-card { text-align:center; padding:1.5rem 1rem; }
@@ -165,42 +175,42 @@
                     </div>
                     <div class="container">
                         <div class="row gy-4">
-                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
+                            <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
                                 <div class="service-item position-relative">
                                     <div class="icon"><i class="bi bi-database icon"></i></div>
                                     <h4><a href="/datasets" class="stretched-link">{% trans "Quản lý Layers" %}</a></h4>
                                     <p>{% trans "Đăng tải, quản lý metadata và chia sẻ các lớp dữ liệu vector/raster theo tiêu chuẩn OGC." %}</p>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
+                            <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
                                 <div class="service-item position-relative">
                                     <div class="icon"><i class="bi bi-map icon"></i></div>
                                     <h4><a href="/maps" class="stretched-link">{% trans "Bản đồ Tương tác" %}</a></h4>
                                     <p>{% trans "Tạo bản đồ từ nhiều lớp dữ liệu, công cụ vẽ, đo lường và phân tích trực tuyến." %}</p>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
+                            <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
                                 <div class="service-item position-relative">
                                     <div class="icon"><i class="bi bi-file-earmark-text icon"></i></div>
                                     <h4><a href="/documents" class="stretched-link">{% trans "Tài liệu & Metadata" %}</a></h4>
                                     <p>{% trans "Quản lý tài liệu không gian, metadata ISO 19115 và lịch sử thay đổi." %}</p>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="400">
+                            <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
                                 <div class="service-item position-relative">
                                     <div class="icon"><i class="bi bi-globe icon"></i></div>
                                     <h4><a href="" class="stretched-link">{% trans "Chuẩn mở OGC" %}</a></h4>
                                     <p>{% trans "Hỗ trợ WMS, WFS, WMTS, WCS, CSW - tương thích với các phần mềm GIS khác." %}</p>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="500">
+                            <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
                                 <div class="service-item position-relative">
                                     <div class="icon"><i class="bi bi-people icon"></i></div>
                                     <h4><a href="" class="stretched-link">{% trans "Phân quyền & Nhóm" %}</a></h4>
                                     <p>{% trans "Quản lý người dùng, nhóm và quyền truy cập chi tiết cho từng tài nguyên." %}</p>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="600">
+                            <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
                                 <div class="service-item position-relative">
                                     <div class="icon"><i class="bi bi-hdd-network icon"></i></div>
                                     <h4><a href="" class="stretched-link">{% trans "Tích hợp GeoServer" %}</a></h4>
