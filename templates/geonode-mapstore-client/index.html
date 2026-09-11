@@ -36,6 +36,10 @@
             /* Grid gọn, card đều nhau */
             .gn-arsha .services .service-item { width:100%; }
             .gn-arsha .services .service-item p { font-size:14.5px; line-height:1.65; }
+            .gn-arsha #services .row { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1.5rem; margin:0; }
+            .gn-arsha #services .row > div { padding:0; margin:0; max-width:100%; }
+            @media (max-width: 991px) { .gn-arsha #services .row { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+            @media (max-width: 767px) { .gn-arsha #services .row { grid-template-columns:minmax(0,1fr); } }
             .gn-arsha .section-title p { font-size:1rem; }
 
             .gn-stats-band { background:#fff; border-bottom:1px solid #e2e8f0; }
