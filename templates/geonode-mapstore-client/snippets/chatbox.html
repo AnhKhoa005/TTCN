@@ -104,7 +104,17 @@
     lastId: 0,
     timer: null,
     csrf: '',
+    welcomed: false,
     el: function(id){ return document.getElementById(id); }
+  };
+  window.GnChat = GnChat;
+
+  GnChat.WELCOME_TEXT = 'Xin chào bạn !';
+
+  GnChat.esc = function(s){
+    var d = document.createElement('div');
+    d.textContent = (s === undefined || s === null) ? '' : String(s);
+    return d.innerHTML;
   };
 
   GnChat.init = function(){
@@ -119,6 +129,7 @@
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); GnChat.send(); }
       });
     }
+    GnChat.showWelcome();
     GnChat.load();
     GnChat.timer = setInterval(GnChat.load, 5000);
   };
@@ -137,19 +148,40 @@
     }
   };
 
+  GnChat.showWelcome = function(){
+    var msgs = GnChat.el('gn-chat-messages');
+    if (!msgs || GnChat.welcomed) return;
+    GnChat.welcomed = true;
+    var box = document.createElement('div');
+    box.className = 'gn-chat-msg gn-other';
+    box.setAttribute('data-welcome', '1');
+    box.innerHTML = '<div class="gn-chat-user">Hỗ trợ</div>' +
+                    '<div>' + GnChat.esc(GnChat.WELCOME_TEXT) + ' Tôi có thể giúp gì cho bạn về dữ liệu GIS hôm nay?</div>';
+    msgs.appendChild(box);
+  };
+
   GnChat.load = function(){
     fetch('/api/v2/chat/messages/?limit=50', { headers: { 'X-CSRFToken': GnChat.csrf } })
       .then(function(res){ return res.json(); })
       .then(function(data){
-        if (!data.messages || !data.messages.length) return;
         var msgs = GnChat.el('gn-chat-messages');
         if (!msgs) return;
+        GnChat.showWelcome();
+        if (!data.messages || !data.messages.length) {
+          var st = GnChat.el('gn-chat-status');
+          if (st) st.textContent = 'Trực tuyến';
+          return;
+        }
         GnChat.lastId = data.messages[data.messages.length - 1].id;
+        var w = msgs.querySelector('[data-welcome]');
         msgs.innerHTML = '';
+        if (w) msgs.appendChild(w);
         data.messages.forEach(GnChat.renderMsg);
         msgs.scrollTop = msgs.scrollHeight;
+        var st2 = GnChat.el('gn-chat-status');
+        if (st2) st2.textContent = 'Trực tuyến';
         GnChat.updateBadge();
-        GnChat.markSeen();
+        if (GnChat.open) GnChat.markSeen();
       })
       .catch(function(){});
   };
@@ -161,9 +193,9 @@
     } catch(e){}
     var box = document.createElement('div');
     box.className = 'gn-chat-msg ' + (isMine ? 'gn-mine' : 'gn-other');
-    box.innerHTML = '<div class="gn-chat-user">' + m.username + '</div>' +
-                    '<div>' + m.message + '</div>' +
-                    '<div class="gn-chat-time">' + m.created_at + '</div>';
+    box.innerHTML = '<div class="gn-chat-user">' + GnChat.esc(m.username) + '</div>' +
+                    '<div>' + GnChat.esc(m.message) + '</div>' +
+                    '<div class="gn-chat-time">' + GnChat.esc(m.created_at) + '</div>';
     GnChat.el('gn-chat-messages').appendChild(box);
   };
 

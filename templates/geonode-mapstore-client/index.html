@@ -118,6 +118,41 @@
             .gn-custom-footer a:hover { color:#fff; }
             .gn-custom-footer .badge { font-weight:500; }
             .gn-custom-footer .border-light { border-color:rgba(255,255,255,0.12) !important; }
+
+            .gn-home-layers { background:#fff; padding:64px 0; }
+            .gn-home-layers .section-title { text-align:center; margin-bottom:0.5rem; }
+            .gn-home-layers .section-title h2 { font-weight:800; color:#1e3a5f; margin-bottom:0.4rem; }
+            .gn-home-layers .section-sub { text-align:center; color:#64748b; margin-bottom:2rem; }
+            .gn-layer-card {
+                background:#fff; border:1px solid #e2e8f0; border-radius:1rem; overflow:hidden; height:100%;
+                box-shadow:0 2px 12px rgba(15,23,42,0.06); transition:transform .2s, box-shadow .2s;
+                display:flex; flex-direction:column;
+            }
+            .gn-layer-card:hover { transform:translateY(-5px); box-shadow:0 16px 34px rgba(37,99,235,0.16); }
+            .gn-layer-thumb { position:relative; height:170px; background:linear-gradient(135deg,#1e3a5f,#2563eb); overflow:hidden; }
+            .gn-layer-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+            .gn-layer-thumb .thumb-ph { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.75); font-size:2.4rem; }
+            .gn-layer-type { position:absolute; top:10px; left:10px; font-size:.72rem; font-weight:700; padding:.28rem .7rem; border-radius:2rem; box-shadow:0 2px 8px rgba(0,0,0,.2); }
+            .gn-layer-type.raster { background:#16a34a; color:#fff; }
+            .gn-layer-type.vector { background:#2563eb; color:#fff; }
+            .gn-layer-card .card-body { padding:1.1rem 1.2rem 0.6rem; display:flex; flex-direction:column; flex:1; }
+            .gn-layer-card .card-title { font-size:1rem; font-weight:700; color:#1e3a5f; margin-bottom:.25rem; line-height:1.35; }
+            .gn-layer-card .resname { font-size:.75rem; color:#94a3b8; font-family:monospace; }
+            .gn-layer-card .card-text { font-size:.85rem; color:#64748b; line-height:1.55; margin-top:.5rem; }
+            .gn-layer-card .card-footer { background:#f8fafc; border-top:1px solid #eef2f7; padding:.7rem 1.2rem; display:flex; justify-content:space-between; align-items:center; }
+            .gn-layer-card .owner { font-size:.78rem; color:#64748b; }
+            .gn-layer-card .btn-open { background:#2563eb; color:#fff; font-size:.8rem; font-weight:600; border-radius:.5rem; padding:.42rem .9rem; text-decoration:none; }
+            .gn-layer-card .btn-open:hover { background:#1d4ed8; color:#fff; }
+
+            #ms-container .grid-card, #ms-container .mapstore-resource-card, #ms-container .ms-resource-card,
+            #ms-container .ms2-card {
+                border-radius:14px !important; overflow:hidden;
+                box-shadow:0 4px 18px rgba(15,23,42,0.10) !important;
+                border:1px solid #e2e8f0 !important;
+            }
+            #ms-container .grid-card:hover, #ms-container .mapstore-resource-card:hover {
+                box-shadow:0 14px 30px rgba(37,99,235,0.16) !important;
+            }
         </style>
         {% endblock %}
 
@@ -263,9 +298,22 @@
                 </section>
 
                 <div class="gn-container">
-                    <div class="gn-home-featured-cards" style="padding:48px 0;">
-                        <div id="gn-home-featured-resources-grid"></div>
-                    </div>
+                    <section class="gn-home-layers">
+                        <div class="container">
+                            <div class="section-title">
+                                <h2>{% trans "Layers nổi bật" %}</h2>
+                            </div>
+                            <p class="section-sub">{% trans "Khám phá các lớp dữ liệu không gian mới nhất trên nền tảng" %}</p>
+                            <div class="row g-4" id="gn-home-layers-grid">
+                                <div class="col-12 text-center text-secondary py-4"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <a href="/datasets" class="btn btn-primary btn-lg" style="background:#2563eb;border-color:#2563eb;border-radius:.6rem;padding:.7rem 2rem;font-weight:600;">
+                                    {% trans "Xem tất cả Layers" %} <i class="fa fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
                 </div>
                 {% endblock %}
 
@@ -367,6 +415,45 @@
                             fetch('/api/v2/maps/?page_size=1').then(r=>r.json()).then(d=>setStat('home-stat-maps', d.total || 0)).catch(function(){});
                             fetch('/api/v2/documents/?page_size=1').then(r=>r.json()).then(d=>setStat('home-stat-documents', d.total || 0)).catch(function(){});
                             fetch('/api/v2/users/?page_size=1').then(r=>r.json()).then(d=>setStat('home-stat-users', d.total || 0)).catch(function(){});
+                        } catch(e) {}
+                        // featured layers grid (professional cards)
+                        try {
+                            var escH = function(s){ var d=document.createElement('div'); d.textContent=(s===undefined||s===null)?'':String(s); return d.innerHTML; };
+                            fetch('/api/v2/datasets/?page_size=8').then(r=>r.json()).then(function(d){
+                                var grid = document.getElementById('gn-home-layers-grid');
+                                if(!grid) return;
+                                var list = (d.datasets||[]).slice(0,4);
+                                if(!list.length){ grid.innerHTML = '<div class="col-12 text-center text-secondary">Chưa có layer nào</div>'; return; }
+                                grid.innerHTML = list.map(function(l){
+                                    var isRaster = (l.subtype==='raster') || l.sourcetype==='coverage' || l.sourcetype==='remote';
+                                    var owner = (l.owner && l.owner.username) ? l.owner.username : 'admin';
+                                    var detail = '/catalogue/#/dataset/' + (l.pk || l.id || '');
+                                    var visual = l.thumbnail_url
+                                        ? '<img src="'+escH(l.thumbnail_url)+'" alt="" loading="lazy">'
+                                        : '<div class="thumb-ph"><i class="fa fa-'+(isRaster?'image':'map')+'"></i></div>';
+                                    var abs = (l.raw_abstract && l.raw_abstract!=='No abstract provided') ? l.raw_abstract : (l.abstract || 'Chưa có mô tả.');
+                                    if(abs.length > 110) abs = abs.slice(0,110) + '...';
+                                    return '<div class="col-md-6 col-lg-3">'+
+                                        '<div class="gn-layer-card">'+
+                                            '<div class="gn-layer-thumb">'+visual+
+                                                '<span class="gn-layer-type '+(isRaster?'raster':'vector')+'">'+(isRaster?'Raster':'Vector')+'</span>'+
+                                            '</div>'+
+                                            '<div class="card-body">'+
+                                                '<div class="card-title">'+escH(l.title)+'</div>'+
+                                                '<div class="resname">'+escH(l.alternate||l.name||'')+'</div>'+
+                                                '<p class="card-text">'+escH(abs)+'</p>'+
+                                            '</div>'+
+                                            '<div class="card-footer">'+
+                                                '<span class="owner"><i class="fa fa-user me-1"></i>'+escH(owner)+'</span>'+
+                                                '<a class="btn-open" href="'+detail+'">Mở layer</a>'+
+                                            '</div>'+
+                                        '</div>'+
+                                    '</div>';
+                                }).join('');
+                            }).catch(function(){
+                                var g = document.getElementById('gn-home-layers-grid');
+                                if(g) g.innerHTML = '<div class="col-12 text-center text-secondary">Không tải được layers</div>';
+                            });
                         } catch(e) {}
                     </script>
                 {% endblock %}
