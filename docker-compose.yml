@@ -23,6 +23,7 @@ x-common-django:
     - ./templates/geonode-mapstore-client/pages/maps.html:/usr/src/venv/lib/python3.12/site-packages/geonode_mapstore_client/templates/geonode-mapstore-client/pages/maps.html
     - ./templates/geonode-mapstore-client/pages/documents.html:/usr/src/venv/lib/python3.12/site-packages/geonode_mapstore_client/templates/geonode-mapstore-client/pages/documents.html
     - ./templates/geonode-mapstore-client/snippets/chatbox.html:/usr/src/venv/lib/python3.12/site-packages/geonode_mapstore_client/templates/geonode-mapstore-client/snippets/chatbox.html
+    - ./arsha:/mnt/volumes/statics/static/arsha
   depends_on:
     db:
       condition: service_healthy
@@ -85,6 +86,7 @@ services:
       - nginx-confd:/etc/nginx
       - nginx-certificates:/geonode-certificates
       - statics:/mnt/volumes/statics
+      - ./arsha:/mnt/volumes/statics/static/arsha
     restart: unless-stopped
 
   # Gets and installs letsencrypt certificates

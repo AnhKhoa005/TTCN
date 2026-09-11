@@ -14,115 +14,25 @@
         {% block extra_style %}
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Jost:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+        <link href="/static/arsha/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+        <link href="/static/arsha/vendor/aos/aos.css" rel="stylesheet">
+        <link href="/static/arsha/css/main.css" rel="stylesheet">
         <style>
-            .gn-home-hero, .gn-features, .gn-cta, .gn-stats-band {
+            .gn-stats-band, .gn-home-layers {
                 font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             }
-            .gn-home-hero {
-                background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 55%, #2563eb 100%);
-                color: #fff;
-                padding: 80px 0 70px;
-                text-align: center;
-                position: relative;
-                overflow: hidden;
-            }
-            .gn-home-hero::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-                                  linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-                background-size: 44px 44px;
-                pointer-events: none;
-            }
-            .gn-home-hero .container { position: relative; z-index: 2; }
-            .gn-home-hero h1 {
-                font-family: 'Be Vietnam Pro', 'Inter', 'Segoe UI', system-ui, sans-serif;
-                font-size: 3.2rem;
-                font-weight: 700;
-                margin-bottom: 1rem;
-                letter-spacing: -0.03em;
-                line-height: 1.15;
-            }
-            .gn-home-hero p.lead {
-                font-size: 1.2rem;
-                opacity: 0.92;
-                max-width: 720px;
-                margin: 0 auto 2rem;
-            }
-            .gn-hero-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
-            .gn-hero-btns .btn {
-                padding: 0.8rem 1.75rem;
-                font-weight: 600;
-                border-radius: 0.5rem;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                transition: transform 0.15s, box-shadow 0.15s;
-            }
-            .gn-hero-btns .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-            .gn-hero-btns .btn-light { background:#fff; color:#1e3a5f; border-color:#fff; }
-            .gn-hero-btns .btn-outline-light2 { background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.5); }
-            .gn-hero-btns .btn-outline-light2:hover { background:rgba(255,255,255,0.1); border-color:#fff; }
-
-            .gn-hero-search { max-width:580px; margin:1.6rem auto 0; }
-            .gn-hero-search .input-group { background:#fff; border-radius:.65rem; overflow:hidden; box-shadow:0 14px 40px rgba(16,35,63,.35); }
-            .gn-hero-search .input-group-text { background:#fff; border:0; }
-            .gn-hero-search .form-control { border:0; font-size:1rem; padding:.85rem 0; }
-            .gn-hero-search .form-control:focus { outline:none; box-shadow:none; }
+            .gn-arsha .gn-hero-search { max-width:560px; margin:1.8rem 0 0; }
+            .gn-arsha .gn-hero-search .input-group { background:#fff; border-radius:50px; overflow:hidden; box-shadow:0 14px 40px rgba(16,35,63,.35); display:flex; }
+            .gn-arsha .gn-hero-search .input-group-text { background:#fff; border:0; padding:.85rem 0 .85rem 1.2rem; }
+            .gn-arsha .gn-hero-search .form-control { border:0; font-size:1rem; padding:.85rem 1rem .85rem 0; flex:1; }
+            .gn-arsha .gn-hero-search .form-control:focus { outline:none; box-shadow:none; }
 
             .gn-stats-band { background:#fff; border-bottom:1px solid #e2e8f0; }
             .gn-stat-card { text-align:center; padding:1.5rem 1rem; }
-            .gn-stat-card .num { font-size:2.25rem; font-weight:800; color:#1e3a5f; line-height:1; }
+            .gn-stat-card .num { font-size:2.25rem; font-weight:800; color:#37517e; line-height:1; }
             .gn-stat-card .lbl { color:#64748b; font-size:0.95rem; margin-top:0.25rem; }
 
-            .gn-features { padding:64px 0; background:#f8fafc; }
-            .gn-features .section-title { text-align:center; margin-bottom:2.5rem; }
-            .gn-features .section-title h2 { font-weight:800; color:#1e3a5f; }
-            .gn-feature-card {
-                background:#fff; border:1px solid #e2e8f0; border-radius:1rem;
-                padding:1.75rem; height:100%; box-shadow:0 2px 12px rgba(0,0,0,0.05);
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
-            .gn-feature-card:hover { transform:translateY(-4px); box-shadow:0 14px 30px rgba(0,0,0,0.10); }
-            .gn-feature-card .ico {
-                width:60px; height:60px; border-radius:0.9rem; display:flex;
-                align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:1rem;
-            }
-            .gn-feature-card h3 { font-size:1.15rem; font-weight:700; color:#1e3a5f; margin-bottom:0.6rem; }
-            .gn-feature-card p { color:#64748b; line-height:1.55; margin:0; }
-
-            .gn-cta { background:#1e3a5f; color:#fff; padding:56px 0; text-align:center; }
-            .gn-cta h2 { font-weight:800; margin-bottom:1rem; }
-            .gn-cta p { color:rgba(255,255,255,0.8); max-width:560px; margin:0 auto 1.75rem; }
-            .gn-cta .btn { padding:0.85rem 2rem; font-weight:600; border-radius:0.5rem; }
-            .gn-cta .btn-light { background:#fff; color:#1e3a5f; }
-            .gn-cta .btn-outline-light2 { background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.5); }
-            .gn-cta .btn-outline-light2:hover { background:rgba(255,255,255,0.1); }
-
-            :root {
-    --gb-navy: #1e3a5f;
-    --gb-blue: #2563eb;
-    --gb-nav-deep: #12294d;
-  }
-  .gn-tech-badge { display:inline-block; padding:.3rem .7rem; border-radius:2rem; font-size:.75rem; font-weight:500; }
-  .gn-tech-badge.b-blue { background:#dbeafe; color:#1d4ed8; }
-  .gn-tech-badge.b-green { background:#d1fae5; color:#047857; }
-  .gn-tech-badge.b-indigo { background:#e0e7ff; color:#4338ca; }
-  .gn-tech-badge.b-amber { background:#fef3c7; color:#b45309; }
-  .gn-tech-badge.b-slate { background:#e2e8f0; color:#334155; }
-  .gn-custom-footer { background:var(--gb-nav-deep); color:rgba(255,255,255,0.6); font-family:'Inter','Segoe UI',system-ui,sans-serif; }
-            .gn-custom-footer h6 { color:#fff; font-weight:600; font-family:'Be Vietnam Pro','Inter',sans-serif; }
-            .gn-custom-footer a { color:rgba(255,255,255,0.6); text-decoration:none; }
-            .gn-custom-footer a:hover { color:#fff; }
-            .gn-custom-footer .badge { font-weight:500; }
-            .gn-custom-footer .border-light { border-color:rgba(255,255,255,0.12) !important; }
-
-            .gn-home-layers { background:#fff; padding:64px 0; }
-            .gn-home-layers .section-title { text-align:center; margin-bottom:0.5rem; }
-            .gn-home-layers .section-title h2 { font-weight:800; color:#1e3a5f; margin-bottom:0.4rem; }
-            .gn-home-layers .section-sub { text-align:center; color:#64748b; margin-bottom:2rem; }
             .gn-layer-card {
                 background:#fff; border:1px solid #e2e8f0; border-radius:1rem; overflow:hidden; height:100%;
                 box-shadow:0 2px 12px rgba(15,23,42,0.06); transition:transform .2s, box-shadow .2s;
@@ -136,13 +46,13 @@
             .gn-layer-type.raster { background:#16a34a; color:#fff; }
             .gn-layer-type.vector { background:#2563eb; color:#fff; }
             .gn-layer-card .card-body { padding:1.1rem 1.2rem 0.6rem; display:flex; flex-direction:column; flex:1; }
-            .gn-layer-card .card-title { font-size:1rem; font-weight:700; color:#1e3a5f; margin-bottom:.25rem; line-height:1.35; }
+            .gn-layer-card .card-title { font-size:1rem; font-weight:700; color:#37517e; margin-bottom:.25rem; line-height:1.35; }
             .gn-layer-card .resname { font-size:.75rem; color:#94a3b8; font-family:monospace; }
             .gn-layer-card .card-text { font-size:.85rem; color:#64748b; line-height:1.55; margin-top:.5rem; }
             .gn-layer-card .card-footer { background:#f8fafc; border-top:1px solid #eef2f7; padding:.7rem 1.2rem; display:flex; justify-content:space-between; align-items:center; }
             .gn-layer-card .owner { font-size:.78rem; color:#64748b; }
-            .gn-layer-card .btn-open { background:#2563eb; color:#fff; font-size:.8rem; font-weight:600; border-radius:.5rem; padding:.42rem .9rem; text-decoration:none; }
-            .gn-layer-card .btn-open:hover { background:#1d4ed8; color:#fff; }
+            .gn-layer-card .btn-open { background:#47b2e4; color:#fff; font-size:.8rem; font-weight:600; border-radius:.5rem; padding:.42rem .9rem; text-decoration:none; }
+            .gn-layer-card .btn-open:hover { background:#31a0d8; color:#fff; }
 
             #ms-container .grid-card, #ms-container .mapstore-resource-card, #ms-container .ms-resource-card,
             #ms-container .ms2-card {
@@ -163,33 +73,61 @@
         <div class="gn-page-wrapper {% if request.user_agent.is_mobile %}gn-mobile{% else %}gn-desktop{% endif %}">
             <div class="gn-theme gn-homepage">
                 {% include './geonode-mapstore-client/_geonode_config.html' %}
+                <div class="gn-arsha">
                 {% block header %}
-                    {% include './geonode-mapstore-client/snippets/header.html' %}
+                <header id="header" class="header d-flex align-items-center fixed-top">
+                    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+                        <a href="/" class="logo d-flex align-items-center me-auto">
+                            <h1 class="sitename">GeoNode</h1>
+                        </a>
+                        <nav id="navmenu" class="navmenu">
+                            <ul>
+                                <li><a href="/" class="active">{% trans "Trang chủ" %}</a></li>
+                                <li><a href="/datasets">{% trans "Layers" %}</a></li>
+                                <li><a href="/maps">{% trans "Bản đồ" %}</a></li>
+                                <li><a href="/documents">{% trans "Tài liệu" %}</a></li>
+                                {% if user.is_authenticated %}
+                                <li><a href="/catalogue/#/upload/dataset">{% trans "Tải lên" %}</a></li>
+                                <li class="dropdown"><a href="#"><span><i class="fa fa-user-circle me-1"></i>{{ user.username }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                    <ul>
+                                        <li><a href="/people/profile/{{ user.username }}/">{% trans "Hồ sơ" %}</a></li>
+                                        <li><a href="/account/logout/?next=/">{% trans "Đăng xuất" %}</a></li>
+                                    </ul>
+                                </li>
+                                {% endif %}
+                            </ul>
+                            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                        </nav>
+                        {% if user.is_authenticated %}
+                        <a class="btn-getstarted" href="/catalogue/#/upload/dataset">{% trans "Tải lên Layer" %}</a>
+                        {% else %}
+                        <a class="btn-getstarted" href="/account/login/?next=/">{% trans "Đăng nhập" %}</a>
+                        {% endif %}
+                    </div>
+                </header>
                 {% endblock %}
 
                 {% block content %}
-                <!-- Hero -->
-                <section class="gn-home-hero">
+                <!-- Hero (Arsha) -->
+                <section id="hero" class="hero section dark-background">
                     <div class="container">
-                        <h1>Welcome to GeoNode</h1>
-                        <p class="lead">
-                            {% trans "Nền tảng Web GIS mã nguồn mở để quản lý, chia sẻ và khám phá dữ liệu không gian một cách trực quan." %}
-                        </p>
-                        <div class="gn-hero-btns">
-                            <a href="/datasets" class="btn btn-light">
-                                <i class="fa fa-database"></i> {% trans "Khám phá Layers" %}
-                            </a>
-                            <a href="/maps" class="btn btn-outline-light2">
-                                <i class="fa fa-map"></i> {% trans "Xem Bản đồ" %}
-                            </a>
-                            <a href="/documents" class="btn btn-outline-light2">
-                                <i class="fa fa-file-text-o"></i> {% trans "Tài liệu" %}
-                            </a>
-                        </div>
-                        <div class="gn-hero-search">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fa fa-search text-secondary"></i></span>
-                                <input id="gn-home-search" class="form-control" placeholder="{% trans 'Tìm kiếm dữ liệu không gian... được điều hướng sang Layers' %}" type="text">
+                        <div class="row gy-4">
+                            <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="zoom-out">
+                                <h1>{% trans "Nền tảng Web GIS mã nguồn mở" %}</h1>
+                                <p>{% trans "Quản lý, chia sẻ và khám phá dữ liệu không gian một cách trực quan." %}</p>
+                                <div class="d-flex flex-wrap" style="gap:.75rem;">
+                                    <a href="/datasets" class="btn-get-started">{% trans "Khám phá Layers" %}</a>
+                                    <a href="/maps" class="btn-get-started" style="background:transparent;border:2px solid rgba(255,255,255,.5);">{% trans "Xem Bản đồ" %}</a>
+                                </div>
+                                <div class="gn-hero-search">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa fa-search text-secondary"></i></span>
+                                        <input id="gn-home-search" class="form-control" placeholder="{% trans 'Tìm kiếm dữ liệu không gian...' %}" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-out" data-aos-delay="200">
+                                <img src="/static/arsha/img/hero-img.png" class="img-fluid animated" alt="WebGIS">
                             </div>
                         </div>
                     </div>
@@ -219,52 +157,53 @@
                     </div>
                 </section>
 
-                <!-- Features -->
-                <section class="gn-features">
+                <!-- Features (Arsha services) -->
+                <section id="services" class="services section light-background">
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>{% trans "Tính năng chính" %}</h2>
+                        <p>{% trans "Mọi thứ bạn cần để quản lý và chia sẻ dữ liệu không gian" %}</p>
+                    </div>
                     <div class="container">
-                        <div class="section-title">
-                            <h2>{% trans "Tính năng chính" %}</h2>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="gn-feature-card">
-                                    <div class="ico" style="background:#dbeafe;color:#2563eb;"><i class="fa fa-database"></i></div>
-                                    <h3><a href="/datasets" style="color:inherit;">{% trans "Quản lý Layers" %}</a></h3>
+                        <div class="row gy-4">
+                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
+                                <div class="service-item position-relative">
+                                    <div class="icon"><i class="bi bi-database icon"></i></div>
+                                    <h4><a href="/datasets" class="stretched-link">{% trans "Quản lý Layers" %}</a></h4>
                                     <p>{% trans "Đăng tải, quản lý metadata và chia sẻ các lớp dữ liệu vector/raster theo tiêu chuẩn OGC." %}</p>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="gn-feature-card">
-                                    <div class="ico" style="background:#dcfce7;color:#16a34a;"><i class="fa fa-map"></i></div>
-                                    <h3><a href="/maps" style="color:inherit;">{% trans "Bản đồ Tương tác" %}</a></h3>
+                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
+                                <div class="service-item position-relative">
+                                    <div class="icon"><i class="bi bi-map icon"></i></div>
+                                    <h4><a href="/maps" class="stretched-link">{% trans "Bản đồ Tương tác" %}</a></h4>
                                     <p>{% trans "Tạo bản đồ từ nhiều lớp dữ liệu, công cụ vẽ, đo lường và phân tích trực tuyến." %}</p>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="gn-feature-card">
-                                    <div class="ico" style="background:#fef3c7;color:#d97706;"><i class="fa fa-file-text-o"></i></div>
-                                    <h3><a href="/documents" style="color:inherit;">{% trans "Tài liệu & Metadata" %}</a></h3>
+                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
+                                <div class="service-item position-relative">
+                                    <div class="icon"><i class="bi bi-file-earmark-text icon"></i></div>
+                                    <h4><a href="/documents" class="stretched-link">{% trans "Tài liệu & Metadata" %}</a></h4>
                                     <p>{% trans "Quản lý tài liệu không gian, metadata ISO 19115 và lịch sử thay đổi." %}</p>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="gn-feature-card">
-                                    <div class="ico" style="background:#fce7f3;color:#db2777;"><i class="fa fa-globe"></i></div>
-                                    <h3>{% trans "Chuẩn mở OGC" %}</h3>
+                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="400">
+                                <div class="service-item position-relative">
+                                    <div class="icon"><i class="bi bi-globe icon"></i></div>
+                                    <h4><a href="" class="stretched-link">{% trans "Chuẩn mở OGC" %}</a></h4>
                                     <p>{% trans "Hỗ trợ WMS, WFS, WMTS, WCS, CSW - tương thích với các phần mềm GIS khác." %}</p>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="gn-feature-card">
-                                    <div class="ico" style="background:#e9d5ff;color:#9333ea;"><i class="fa fa-users"></i></div>
-                                    <h3>{% trans "Phân quyền & Nhóm" %}</h3>
+                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="500">
+                                <div class="service-item position-relative">
+                                    <div class="icon"><i class="bi bi-people icon"></i></div>
+                                    <h4><a href="" class="stretched-link">{% trans "Phân quyền & Nhóm" %}</a></h4>
                                     <p>{% trans "Quản lý người dùng, nhóm và quyền truy cập chi tiết cho từng tài nguyên." %}</p>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="gn-feature-card">
-                                    <div class="ico" style="background:#fed7aa;color:#ea580c;"><i class="fa fa-cogs"></i></div>
-                                    <h3>{% trans "Tích hợp GeoServer" %}</h3>
+                            <div class="col-xl-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="600">
+                                <div class="service-item position-relative">
+                                    <div class="icon"><i class="bi bi-hdd-network icon"></i></div>
+                                    <h4><a href="" class="stretched-link">{% trans "Tích hợp GeoServer" %}</a></h4>
                                     <p>{% trans "Xuất bản dữ liệu trực tiếp lên GeoServer, quản lý style SLD và cache tile." %}</p>
                                 </div>
                             </div>
@@ -272,50 +211,44 @@
                     </div>
                 </section>
 
-                <!-- CTA -->
-                <section class="gn-cta">
+                <!-- CTA (Arsha call-to-action) -->
+                <section id="call-to-action" class="call-to-action section dark-background">
+                    <img src="/static/arsha/img/bg-8.webp" alt="">
                     <div class="container">
-                        <h2>{% trans "Sẵn sàng bắt đầu?" %}</h2>
-                        <p>{% trans "Đăng nhập để tải lên dữ liệu, tạo bản đồ và chia sẻ với cộng đồng." %}</p>
-                        <div class="d-flex gap-3 justify-center flex-wrap">
-                            {% if user.is_authenticated %}
-                                <a href="/catalogue/#/upload/dataset" class="btn btn-light btn-lg">
-                                    <i class="fa fa-upload"></i> {% trans "Tải lên Layer" %}
-                                </a>
-                                <a href="/catalogue/#/create/map" class="btn btn-outline-light2">
-                                    <i class="fa fa-plus"></i> {% trans "Tạo Bản đồ mới" %}
-                                </a>
-                            {% else %}
-                                <a href="/account/login/?next=/" class="btn btn-light btn-lg">
-                                    <i class="fa fa-sign-in"></i> {% trans "Đăng nhập" %}
-                                </a>
-                                <a href="/account/signup/" class="btn btn-outline-light2">
-                                    <i class="fa fa-user-plus"></i> {% trans "Đăng ký" %}
-                                </a>
-                            {% endif %}
+                        <div class="row" data-aos="zoom-in" data-aos-delay="100">
+                            <div class="col-xl-9 text-center text-xl-start">
+                                <h3>{% trans "Sẵn sàng bắt đầu?" %}</h3>
+                                <p>{% trans "Đăng nhập để tải lên dữ liệu, tạo bản đồ và chia sẻ với cộng đồng." %}</p>
+                            </div>
+                            <div class="col-xl-3 cta-btn-container text-center">
+                                {% if user.is_authenticated %}
+                                <a class="cta-btn align-middle" href="/catalogue/#/upload/dataset">{% trans "Tải lên Layer" %}</a>
+                                {% else %}
+                                <a class="cta-btn align-middle" href="/account/login/?next=/">{% trans "Đăng nhập" %}</a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 <div class="gn-container">
-                    <section class="gn-home-layers">
+                    <section id="featured-layers" class="services section">
+                        <div class="container section-title" data-aos="fade-up">
+                            <h2>{% trans "Layers nổi bật" %}</h2>
+                            <p>{% trans "Khám phá các lớp dữ liệu không gian mới nhất trên nền tảng" %}</p>
+                        </div>
                         <div class="container">
-                            <div class="section-title">
-                                <h2>{% trans "Layers nổi bật" %}</h2>
-                            </div>
-                            <p class="section-sub">{% trans "Khám phá các lớp dữ liệu không gian mới nhất trên nền tảng" %}</p>
                             <div class="row g-4" id="gn-home-layers-grid">
                                 <div class="col-12 text-center text-secondary py-4"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
                             </div>
                             <div class="text-center mt-4">
-                                <a href="/datasets" class="btn btn-primary btn-lg" style="background:#2563eb;border-color:#2563eb;border-radius:.6rem;padding:.7rem 2rem;font-weight:600;">
-                                    {% trans "Xem tất cả Layers" %} <i class="fa fa-arrow-right ms-1"></i>
-                                </a>
+                                <a href="/datasets" class="btn-get-started" style="display:inline-block;text-decoration:none;">{% trans "Xem tất cả Layers" %}</a>
                             </div>
                         </div>
                     </section>
                 </div>
                 {% endblock %}
+                </div><!-- /gn-arsha-main -->
 
                 {% block container %}
                     <div id="ms-container">
@@ -356,50 +289,61 @@
                 {% endblock %}
 
                 {% block footer %}
-                <footer class="gn-custom-footer">
-                    <div class="container">
-                        <div class="row" style="padding:2.8rem 0 2rem;">
-                            <div class="col-lg-4">
-                                <a class="brand" href="/" style="color:#fff;font-weight:800;font-size:1.4rem;"><i class="fa fa-globe" style="color:#60a5fa;"></i> Geo<b style="color:#60a5fa;">Node</b></a>
-                                <p class="small mt-3 mb-0" style="max-width:340px;">{% trans "Nền tảng Web GIS mã nguồn mở để quản lý, chia sẻ và khám phá dữ liệu không gian một cách trực quan." %}</p>
+                <div class="gn-arsha">
+                <footer id="footer" class="footer">
+                    <div class="container footer-top">
+                        <div class="row gy-4">
+                            <div class="col-lg-4 col-md-6 footer-about">
+                                <a href="/" class="d-flex align-items-center">
+                                    <span class="sitename">GeoNode</span>
+                                </a>
+                                <div class="footer-contact pt-3">
+                                    <p>{% trans "Nền tảng Web GIS mã nguồn mở để quản lý, chia sẻ và khám phá dữ liệu không gian một cách trực quan." %}</p>
+                                </div>
                             </div>
-                            <div class="col-6 col-lg-2">
-                                <h6 class="mb-3">{% trans "Liên kết" %}</h6>
-                                <ul class="list-unstyled small" style="display:grid;gap:.5rem;margin-bottom:0;">
-                                    <li><a href="/">{% trans "Trang chủ" %}</a></li>
-                                    <li><a href="/datasets">{% trans "Layers" %}</a></li>
-                                    <li><a href="/maps">{% trans "Bản đồ" %}</a></li>
-                                    <li><a href="/documents">{% trans "Tài liệu" %}</a></li>
+                            <div class="col-lg-2 col-md-3 footer-links">
+                                <h4>{% trans "Liên kết" %}</h4>
+                                <ul>
+                                    <li><i class="bi bi-chevron-right"></i> <a href="/">{% trans "Trang chủ" %}</a></li>
+                                    <li><i class="bi bi-chevron-right"></i> <a href="/datasets">{% trans "Layers" %}</a></li>
+                                    <li><i class="bi bi-chevron-right"></i> <a href="/maps">{% trans "Bản đồ" %}</a></li>
+                                    <li><i class="bi bi-chevron-right"></i> <a href="/documents">{% trans "Tài liệu" %}</a></li>
                                 </ul>
                             </div>
-                            <div class="col-6 col-lg-3">
-                                <h6 class="mb-3">{% trans "Nền tảng" %}</h6>
-                                <ul class="list-unstyled small" style="display:grid;gap:.5rem;margin-bottom:0;">
-                                    <li><a href="https://geonode.org" target="_blank" rel="noopener">GeoNode</a></li>
-                                    <li><a href="https://mapstore.readthedocs.io" target="_blank" rel="noopener">MapStore</a></li>
-                                    <li><a href="https://geoserver.org" target="_blank" rel="noopener">GeoServer</a></li>
-                                    <li><a href="https://www.postgresql.org" target="_blank" rel="noopener">PostGIS</a></li>
+                            <div class="col-lg-2 col-md-3 footer-links">
+                                <h4>{% trans "Nền tảng" %}</h4>
+                                <ul>
+                                    <li><i class="bi bi-chevron-right"></i> <a href="https://geonode.org" target="_blank" rel="noopener">GeoNode</a></li>
+                                    <li><i class="bi bi-chevron-right"></i> <a href="https://mapstore.readthedocs.io" target="_blank" rel="noopener">MapStore</a></li>
+                                    <li><i class="bi bi-chevron-right"></i> <a href="https://geoserver.org" target="_blank" rel="noopener">GeoServer</a></li>
+                                    <li><i class="bi bi-chevron-right"></i> <a href="https://www.postgresql.org" target="_blank" rel="noopener">PostGIS</a></li>
                                 </ul>
                             </div>
-                            <div class="col-lg-3">
-                                <h6 class="mb-3">{% trans "Công nghệ" %}</h6>
-                                <div class="d-flex flex-wrap" style="gap:.5rem;">
-                                    <span class="gn-tech-badge b-blue">Bootstrap 5</span>
-                                    <span class="gn-tech-badge b-slate">Django</span>
-                                    <span class="gn-tech-badge b-indigo">Google Fonts</span>
-                                    <span class="gn-tech-badge b-green">GeoServer WMS</span>
-                                    <span class="gn-tech-badge b-amber">PostGIS</span>
+                            <div class="col-lg-4 col-md-12">
+                                <h4>{% trans "Công nghệ" %}</h4>
+                                <p>Bootstrap 5 • Django • GeoServer WMS • PostGIS • MapStore</p>
+                                <div class="social-links d-flex">
+                                    <a href=""><i class="bi bi-github"></i></a>
+                                    <a href=""><i class="bi bi-globe"></i></a>
+                                    <a href=""><i class="bi bi-envelope"></i></a>
                                 </div>
                             </div>
                         </div>
-                        <div class="border-top border-light text-center small" style="padding:1rem 0;border-top:1px solid rgba(255,255,255,0.12);">© <span id="yr"></span> GeoNode <b>WebGIS</b> - {% trans "Đồ án Phát triển ứng dụng Web GIS" %}</div>
+                    </div>
+                    <div class="container copyright text-center mt-4">
+                        <p>© <span id="yr"></span> <strong class="px-1 sitename">GeoNode WebGIS</strong> <span>{% trans "Đồ án Phát triển ứng dụng Web GIS" %}</span></p>
+                        <div class="credits">Homepage design based on <a href="https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/">Arsha</a> by <a href="https://bootstrapmade.com/">BootstrapMade</a></div>
                     </div>
                 </footer>
+                <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+                </div><!-- /gn-arsha-footer -->
                 {% endblock %}
 
                 {% block scripts %}
                     <script src="{% static "lib/js/jquery.min.js" %}"></script>
                     <script src="{% static "lib/js/bootstrap.min.js" %}"></script>
+                    <script src="/static/arsha/vendor/aos/aos.js"></script>
+                    <script src="/static/arsha/js/main.js"></script>
                     <script type="text/javascript">
                         $('.dropdown-toggle').dropdown();
                         var yrEl = document.getElementById('yr'); if (yrEl) yrEl.textContent = new Date().getFullYear();
