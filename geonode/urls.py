@@ -200,4 +200,9 @@ urlpatterns += [
     re_path(r"^metadata_update_redirect$", views.metadata_update_redirect, name="metadata_update_redirect"),
 ]
 
+# Custom Chat API
+urlpatterns += [
+    re_path(r"^api/v2/chat/", include("geonode.chat.urls")),
+]
+
 handler500 = "geonode.views.err500"

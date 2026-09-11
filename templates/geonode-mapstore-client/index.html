@@ -14,7 +14,7 @@
         {% block extra_style %}
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <style>
             .gn-home-hero, .gn-features, .gn-cta, .gn-stats-band {
                 font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -38,7 +38,7 @@
             }
             .gn-home-hero .container { position: relative; z-index: 2; }
             .gn-home-hero h1 {
-                font-family: 'Sora', 'Inter', 'Segoe UI', system-ui, sans-serif;
+                font-family: 'Be Vietnam Pro', 'Inter', 'Segoe UI', system-ui, sans-serif;
                 font-size: 3.2rem;
                 font-weight: 700;
                 margin-bottom: 1rem;
@@ -65,6 +65,12 @@
             .gn-hero-btns .btn-light { background:#fff; color:#1e3a5f; border-color:#fff; }
             .gn-hero-btns .btn-outline-light2 { background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.5); }
             .gn-hero-btns .btn-outline-light2:hover { background:rgba(255,255,255,0.1); border-color:#fff; }
+
+            .gn-hero-search { max-width:580px; margin:1.6rem auto 0; }
+            .gn-hero-search .input-group { background:#fff; border-radius:.65rem; overflow:hidden; box-shadow:0 14px 40px rgba(16,35,63,.35); }
+            .gn-hero-search .input-group-text { background:#fff; border:0; }
+            .gn-hero-search .form-control { border:0; font-size:1rem; padding:.85rem 0; }
+            .gn-hero-search .form-control:focus { outline:none; box-shadow:none; }
 
             .gn-stats-band { background:#fff; border-bottom:1px solid #e2e8f0; }
             .gn-stat-card { text-align:center; padding:1.5rem 1rem; }
@@ -94,6 +100,24 @@
             .gn-cta .btn-light { background:#fff; color:#1e3a5f; }
             .gn-cta .btn-outline-light2 { background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.5); }
             .gn-cta .btn-outline-light2:hover { background:rgba(255,255,255,0.1); }
+
+            :root {
+    --gb-navy: #1e3a5f;
+    --gb-blue: #2563eb;
+    --gb-nav-deep: #12294d;
+  }
+  .gn-tech-badge { display:inline-block; padding:.3rem .7rem; border-radius:2rem; font-size:.75rem; font-weight:500; }
+  .gn-tech-badge.b-blue { background:#dbeafe; color:#1d4ed8; }
+  .gn-tech-badge.b-green { background:#d1fae5; color:#047857; }
+  .gn-tech-badge.b-indigo { background:#e0e7ff; color:#4338ca; }
+  .gn-tech-badge.b-amber { background:#fef3c7; color:#b45309; }
+  .gn-tech-badge.b-slate { background:#e2e8f0; color:#334155; }
+  .gn-custom-footer { background:var(--gb-nav-deep); color:rgba(255,255,255,0.6); font-family:'Inter','Segoe UI',system-ui,sans-serif; }
+            .gn-custom-footer h6 { color:#fff; font-weight:600; font-family:'Be Vietnam Pro','Inter',sans-serif; }
+            .gn-custom-footer a { color:rgba(255,255,255,0.6); text-decoration:none; }
+            .gn-custom-footer a:hover { color:#fff; }
+            .gn-custom-footer .badge { font-weight:500; }
+            .gn-custom-footer .border-light { border-color:rgba(255,255,255,0.12) !important; }
         </style>
         {% endblock %}
 
@@ -126,6 +150,12 @@
                             <a href="/documents" class="btn btn-outline-light2">
                                 <i class="fa fa-file-text-o"></i> {% trans "Tài liệu" %}
                             </a>
+                        </div>
+                        <div class="gn-hero-search">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-search text-secondary"></i></span>
+                                <input id="gn-home-search" class="form-control" placeholder="{% trans 'Tìm kiếm dữ liệu không gian... được điều hướng sang Layers' %}" type="text">
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -278,7 +308,45 @@
                 {% endblock %}
 
                 {% block footer %}
-                    {% include './geonode-mapstore-client/snippets/footer.html' %}
+                <footer class="gn-custom-footer">
+                    <div class="container">
+                        <div class="row" style="padding:2.8rem 0 2rem;">
+                            <div class="col-lg-4">
+                                <a class="brand" href="/" style="color:#fff;font-weight:800;font-size:1.4rem;"><i class="fa fa-globe" style="color:#60a5fa;"></i> Geo<b style="color:#60a5fa;">Node</b></a>
+                                <p class="small mt-3 mb-0" style="max-width:340px;">{% trans "Nền tảng Web GIS mã nguồn mở để quản lý, chia sẻ và khám phá dữ liệu không gian một cách trực quan." %}</p>
+                            </div>
+                            <div class="col-6 col-lg-2">
+                                <h6 class="mb-3">{% trans "Liên kết" %}</h6>
+                                <ul class="list-unstyled small" style="display:grid;gap:.5rem;margin-bottom:0;">
+                                    <li><a href="/">{% trans "Trang chủ" %}</a></li>
+                                    <li><a href="/datasets">{% trans "Layers" %}</a></li>
+                                    <li><a href="/maps">{% trans "Bản đồ" %}</a></li>
+                                    <li><a href="/documents">{% trans "Tài liệu" %}</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <h6 class="mb-3">{% trans "Nền tảng" %}</h6>
+                                <ul class="list-unstyled small" style="display:grid;gap:.5rem;margin-bottom:0;">
+                                    <li><a href="https://geonode.org" target="_blank" rel="noopener">GeoNode</a></li>
+                                    <li><a href="https://mapstore.readthedocs.io" target="_blank" rel="noopener">MapStore</a></li>
+                                    <li><a href="https://geoserver.org" target="_blank" rel="noopener">GeoServer</a></li>
+                                    <li><a href="https://www.postgresql.org" target="_blank" rel="noopener">PostGIS</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-3">
+                                <h6 class="mb-3">{% trans "Công nghệ" %}</h6>
+                                <div class="d-flex flex-wrap" style="gap:.5rem;">
+                                    <span class="gn-tech-badge b-blue">Bootstrap 5</span>
+                                    <span class="gn-tech-badge b-slate">Django</span>
+                                    <span class="gn-tech-badge b-indigo">Google Fonts</span>
+                                    <span class="gn-tech-badge b-green">GeoServer WMS</span>
+                                    <span class="gn-tech-badge b-amber">PostGIS</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-top border-light text-center small" style="padding:1rem 0;border-top:1px solid rgba(255,255,255,0.12);">© <span id="yr"></span> GeoNode <b>WebGIS</b> - {% trans "Đồ án Phát triển ứng dụng Web GIS" %}</div>
+                    </div>
+                </footer>
                 {% endblock %}
 
                 {% block scripts %}
@@ -286,6 +354,12 @@
                     <script src="{% static "lib/js/bootstrap.min.js" %}"></script>
                     <script type="text/javascript">
                         $('.dropdown-toggle').dropdown();
+                        var yrEl = document.getElementById('yr'); if (yrEl) yrEl.textContent = new Date().getFullYear();
+                        // hero search -> navigate to Layers with query
+                        var hs = document.getElementById('gn-home-search');
+                        if (hs) hs.addEventListener('keydown', function(e){
+                            if (e.key === 'Enter') { var v = hs.value.trim(); if (v) location.href = '/datasets?q=' + encodeURIComponent(v); }
+                        });
                         // load stats
                         var setStat = function(id, total) { var el = document.getElementById(id); if (el) el.textContent = total; };
                         try {
@@ -298,5 +372,6 @@
                 {% endblock %}
             </div>
         </div>
-    </body>
+    {% include './geonode-mapstore-client/snippets/chatbox.html' %}
+</body>
 </html>

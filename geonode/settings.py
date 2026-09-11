@@ -2298,3 +2298,6 @@ FILE_UPLOAD_PERMISSIONS = 0o777
 
 # Enable or not the XLSX / XLS upload
 XLSX_UPLOAD_ENABLED = ast.literal_eval(os.getenv("XLSX_UPLOAD_ENABLED", "False"))
+
+# Custom Chat app (footer live chat widget)
+INSTALLED_APPS += ("geonode.chat",)

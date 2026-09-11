@@ -1,121 +1,183 @@
-{% load static %}
-{% load i18n %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tài liệu - GeoNode WebGIS</title>
-<link href="{% static 'geonode/css/base.css' %}" rel="stylesheet"/>
-<link rel="stylesheet" href="{% static 'geonode/css/font-awesome.min.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    color-scheme: light;
-    --navy: #1e3a5f; --navy-deep: #12294d;
-    --blue: #2563eb; --blue-dark: #1d4ed8; --blue-soft: #dbeafe;
-    --ink: #10233f; --slate: #54677e; --muted: #8ea0b5;
-    --line: #e3e9f2; --bg: #f3f6fb;
+    --navy: #1e3a5f; --navy-deep: #12294d; --blue: #2563eb; --blue-dark: #1d4ed8;
+    --ink: #10233f; --slate: #54677e; --muted: #8ea0b5; --bg: #f3f6fb; --line: #e3e9f2;
   }
-  body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); }
-  a { text-decoration: none; }
-  .topbar { background: linear-gradient(180deg, #24466e, var(--navy)); color: #fff; padding: 18px 0; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 14px rgba(16,35,63,0.25); }
-  .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
-  .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
-  .brand { display: flex; align-items: center; gap: 12px; font-family: 'Be Vietnam Pro', 'Inter', sans-serif; font-weight: 800; font-size: 1.75rem; color: #fff; letter-spacing: -0.01em; }
-  .brand i { color: #60a5fa; font-size: 1.9rem; }
-  .brand b { color: #60a5fa; }
-  .nav { display: flex; gap: 10px; align-items: center; }
-  .nav a { color: rgba(255,255,255,0.82); padding: 12px 22px; border-radius: 12px; font-size: 1.05rem; font-weight: 600; transition: all 0.15s; white-space: nowrap; border: 1px solid transparent; }
-  .nav a i { font-size: 1.1rem; margin-right: 6px; }
-  .nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
-  .nav a.active { background: var(--blue); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.45); }
-  .nav .back { color: #bbd7ff; padding: 12px 14px; }
-  .herobanner { background: linear-gradient(115deg, var(--navy-deep) 0%, var(--navy) 45%, #2f5da3 78%, var(--blue) 135%); color: #fff; padding: 50px 0 46px; position: relative; overflow: hidden; }
-  .herobanner::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.13) 1px, transparent 1px); background-size: 22px 22px; pointer-events: none; }
-  .herobanner::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: linear-gradient(90deg, #60a5fa, #2563eb, #60a5fa); }
-  .herobanner .container { position: relative; }
-  .crumb { font-size: 0.8rem; color: rgba(255,255,255,0.65); margin-bottom: 10px; letter-spacing: 0.03em; text-transform: uppercase; font-weight: 500; }
-  .crumb a { color: #bbd7ff; }
+  body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+  .brand { font-family: 'Be Vietnam Pro', 'Inter', sans-serif; font-weight: 800; font-size: 1.5rem; color: #fff !important; letter-spacing: -0.01em; }
+  .brand i { color: #60a5fa; }
+  .navbar { background: linear-gradient(180deg, #24466e, var(--navy)); box-shadow: 0 2px 14px rgba(16,35,63,.25); }
+  .navbar .nav-link { color: rgba(255,255,255,.82); font-weight: 600; margin-left: .5rem; border-radius: .5rem; }
+  .navbar .nav-link:hover { color: #fff; background: rgba(255,255,255,.12); }
+  .navbar .nav-link.active { color: #fff; background: var(--blue); box-shadow: 0 4px 14px rgba(37,99,235,.45); }
+  .navbar .user-chip { background: rgba(255,255,255,.12); border-radius: 2rem; padding: .28rem .85rem; color: #fff; font-size: .82rem; font-weight: 600; }
+  .hero { background: linear-gradient(115deg, var(--navy-deep) 0%, var(--navy) 45%, #2f5da3 78%, var(--blue) 135%); color: #fff; padding: 3.2rem 0 3rem; position: relative; }
+  .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: linear-gradient(90deg,#60a5fa,#2563eb,#60a5fa); }
+  .crumb { font-size: .8rem; color: rgba(255,255,255,.65); letter-spacing: .03em; text-transform: uppercase; }
+  .crumb a { color: #bbd7ff; text-decoration: none; }
   .crumb a:hover { color: #fff; }
-  .crumb span { color: #fff; font-weight: 600; }
-  .herobanner h1 { font-family: 'Be Vietnam Pro', 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 2.3rem; font-weight: 700; letter-spacing: -0.02em; }
-  .herobanner p { color: rgba(255,255,255,0.82); margin-top: 8px; font-size: 1.02rem; max-width: 640px; }
-  .toolbar { padding: 22px 0 4px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-  .searchbox { flex: 1; min-width: 220px; position: relative; }
-  .searchbox input { width: 100%; padding: 12px 14px 12px 40px; border: 1px solid #c9d4e2; border-radius: 12px; font-size: 0.95rem; background: #fff; font-family: inherit; transition: border-color 0.15s, box-shadow 0.15s; }
-  .searchbox input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
-  .searchbox i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-  .countline { padding: 12px 0; color: var(--slate); font-size: 0.9rem; font-weight: 500; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding-bottom: 56px; }
-  .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px rgba(16,35,63,0.06); transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s; display: flex; flex-direction: column; }
-  .card:hover { transform: translateY(-5px); box-shadow: 0 18px 36px rgba(30,58,95,0.16); border-color: #bcd0ee; }
-  .thumb { height: 130px; background: linear-gradient(135deg, #dbeafe, #eff6ff); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
-  .card:hover .thumb img { transform: scale(1.05); }
-  .thumb .ph { font-size: 2.6rem; color: #93c5fd; }
-  .thumb .ext { position: absolute; top: 10px; left: 10px; background: var(--blue); color: #fff; font-size: 0.7rem; padding: 4px 11px; border-radius: 20px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 2px 8px rgba(37,99,235,0.4); }
-  .card-body { padding: 16px 16px 12px; display: flex; flex-direction: column; flex: 1; }
-  .card-body h3 { font-family: 'Be Vietnam Pro', 'Inter', sans-serif; font-size: 1.04rem; font-weight: 600; line-height: 1.42; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.15s; }
-  .card:hover .card-body h3 { color: var(--blue); }
-  .card-body .abs { font-size: 0.83rem; color: var(--slate); line-height: 1.5; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 0.76rem; color: var(--muted); font-weight: 500; }
-  .meta span { display: flex; align-items: center; gap: 5px; }
+  .hero h1 { font-family: 'Be Vietnam Pro', 'Inter', sans-serif; font-size: 2.3rem; font-weight: 700; letter-spacing: -0.02em; }
+  .hero p { color: rgba(255,255,255,.82); }
+  .hero-search { max-width: 560px; margin-top: 1.6rem; }
+  .hero-search .input-group { background: #fff; border-radius: .65rem; overflow: hidden; box-shadow: 0 14px 40px rgba(16,35,63,.35); }
+  .hero-search .form-control { border: 0; font-size: 1rem; }
+  .hero-search .form-control:focus { outline: none; box-shadow: none; }
+  .card { border: 1px solid var(--line); border-radius: 1rem; overflow: hidden; box-shadow: 0 2px 10px rgba(16,35,63,.06); transition: transform .18s, box-shadow .18s, border-color .18s; }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 18px 36px rgba(30,58,95,.16); border-color: #bcd0ee; }
+  .thumb { width: 100%; height: 130px; object-fit: cover; -o-object-fit: cover; }
+  .thumb-ph { width: 100%; height: 130px; background: linear-gradient(135deg,#dbeafe,#eff6ff); display: flex; align-items: center; justify-content: center; font-size: 2.6rem; color: #93c5fd; }
+  .card-title { font-family: 'Be Vietnam Pro', 'Inter', sans-serif; font-weight: 600; color: var(--ink); line-height: 1.42; transition: color .15s; font-size: 1rem; margin-bottom: .15rem; }
+  .card:hover .card-title { color: var(--blue); }
+  .card-text { font-size: .83rem; color: var(--slate); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .meta { font-size: .76rem; color: var(--muted); font-weight: 500; }
   .meta i { color: #7fa5d6; }
-  .card-foot { border-top: 1px solid #eef2f7; padding: 12px 16px; display: flex; align-items: center; justify-content: flex-end; margin-top: auto; }
-  .btn-open { background: linear-gradient(180deg, #3b82f6, var(--blue)); color: #fff; padding: 8px 16px; border-radius: 9px; font-size: 0.83rem; font-weight: 600; box-shadow: 0 3px 10px rgba(37,99,235,0.35); transition: background 0.15s, box-shadow 0.15s; }
-  .btn-open:hover { background: var(--blue-dark); box-shadow: 0 5px 14px rgba(37,99,235,0.45); }
-  .foot { background: var(--navy); color: rgba(255,255,255,0.6); text-align: center; padding: 24px 0; font-size: 0.83rem; }
-  .foot b { color: #fff; }
-  .empty { text-align: center; padding: 60px 20px; color: var(--slate); }
-  .empty i { font-size: 3rem; color: #c3d2e5; display: block; margin-bottom: 12px; }
-  .spinner { text-align: center; padding: 60px; color: var(--slate); }
-  @media(max-width:640px){ .nav a span { display:none; } .herobanner h1{font-size:1.5rem;} }
+  .card-footer { background: #fff; border-top: 1px solid #eef2f7; }
+  .btn-open { background: linear-gradient(180deg,#3b82f6,var(--blue)); color: #fff; border: 0; font-weight: 600; box-shadow: 0 3px 10px rgba(37,99,235,.35); }
+  .btn-open:hover { background: var(--blue-dark); color: #fff; }
+  .btn-outline-primary { --bs-btn-color: var(--blue); --bs-btn-border-color: #bcd0ee; --bs-btn-hover-bg: var(--blue); --bs-btn-hover-border-color: var(--blue); --bs-btn-active-bg: var(--blue); --bs-btn-active-border-color: var(--blue); }
+  .site-footer { background: var(--navy-deep); color: rgba(255,255,255,.6); }
+  .site-footer h6 { color: #fff; font-weight: 600; font-family: 'Be Vietnam Pro','Inter',sans-serif; }
+  .site-footer a { color: rgba(255,255,255,.6); text-decoration: none; }
+  .site-footer a:hover { color: #fff; }
+  .site-footer .badge { font-weight: 500; }
 </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="container topbar-inner">
-    <a class="brand" href="/"><i class="fa fa-globe"></i> Geo<b>Node</b></a>
-    <nav class="nav">
-      <a class="back" href="/"><i class="fa fa-home"></i></a>
-      <a href="/datasets"><i class="fa fa-database"></i> <span>Layers</span></a>
-      <a href="/maps"><i class="fa fa-map"></i> <span>Bản đồ</span></a>
-      <a href="/documents" class="active"><i class="fa fa-file-text-o"></i> <span>Tài liệu</span></a>
-    </nav>
-  </div>
-</div>
-
-<div class="herobanner">
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
   <div class="container">
-    <div class="crumb"><a href="/">Trang chủ</a> / <span>Tài liệu</span></div>
-    <h1>Tài liệu</h1>
-    <p>Kho tài liệu, báo cáo và dữ liệu hỗ trợ trên nền tảng GeoNode.</p>
-  </div>
-</div>
-
-<div class="container">
-  <div class="toolbar">
-    <div class="searchbox">
-      <i class="fa fa-search"></i>
-      <input id="q" type="text" placeholder="Tìm kiếm tài liệu...">
+    <a class="navbar-brand brand" href="/"><i class="fa fa-globe me-2"></i>Geo<b class="text-primary">Node</b></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#gnNav" aria-controls="gnNav" aria-expanded="false" aria-label="Chuyển menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="gnNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/"><i class="fa fa-home"></i></a></li>
+        <li class="nav-item"><a class="nav-link" href="/datasets"><i class="fa fa-database me-1"></i>Layers</a></li>
+        <li class="nav-item"><a class="nav-link" href="/maps"><i class="fa fa-map me-1"></i>Bản đồ</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/documents"><i class="fa fa-file-text-o me-1"></i>Tài liệu</a></li>
+      </ul>
+      {% if user.is_authenticated %}
+      <div class="d-flex align-items-center gap-2 ms-lg-3 mt-2 mt-lg-0">
+        <span class="user-chip"><i class="fa fa-user-circle me-1"></i>{{ user.username }}</span>
+        <a class="btn btn-sm btn-outline-light" href="/account/logout/?next=/documents"><i class="fa fa-sign-out"></i><span class="d-none d-md-inline ms-1">Đăng xuất</span></a>
+      </div>
+      {% else %}
+      <div class="d-flex gap-2 ms-lg-3 mt-2 mt-lg-0">
+        <a class="btn btn-sm btn-outline-light" href="/account/login/?next=/documents"><i class="fa fa-sign-in me-1"></i>Đăng nhập</a>
+        <a class="btn btn-sm btn-primary" href="/account/signup/"><i class="fa fa-user-plus me-1"></i>Đăng ký</a>
+      </div>
+      {% endif %}
     </div>
   </div>
-  <div class="countline" id="countline"></div>
-  <div id="grid" class="grid"><div class="spinner" style="grid-column:1/-1"><i class="fa fa-spinner fa-spin" style="font-size:2rem"></i><br>Đang tải...</div></div>
-</div>
+</nav>
 
-<div class="foot">© <span id="yr"></span> GeoNode <b>WebGIS</b> - Đồ án Phát triển ứng dụng Web GIS</div>
+<header class="hero">
+  <div class="container">
+    <div class="crumb"><a href="/">Trang chủ</a> / <span class="text-white fw-semibold">Tài liệu</span></div>
+    <h1 class="mb-1">Tài liệu</h1>
+    <p class="mb-0">Kho tài liệu, báo cáo và dữ liệu hỗ trợ trên nền tảng GeoNode.</p>
+    <div class="hero-search">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-0"><i class="fa fa-search text-secondary"></i></span>
+        <input id="q" type="text" class="form-control" placeholder="Tìm kiếm tài liệu...">
+      </div>
+    </div>
+  </div>
+</header>
 
+<main class="container py-4">
+  <div class="row g-3 align-items-center justify-content-end">
+    <div class="col-md-auto">
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fa fa-sort me-1"></i><span id="sortLabel">Mới nhất</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><button type="button" class="dropdown-item active" data-sort="newest">Mới nhất</button></li>
+          <li><button type="button" class="dropdown-item" data-sort="title">Tên A-Z</button></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="text-secondary small fw-medium py-2" id="countline"></div>
+  <div id="grid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-2">
+    <div class="col-12 text-center py-5 text-secondary"><i class="fa fa-spinner fa-spin fa-2x d-block mb-2"></i>Đang tải...</div>
+  </div>
+  <nav class="d-flex justify-content-center align-items-center gap-3 py-4" aria-label="Phân trang">
+    <button id="prevBtn" type="button" class="btn btn-outline-primary btn-sm"><i class="fa fa-chevron-left me-1"></i>Trước</button>
+    <span id="pageinfo" class="text-secondary small fw-medium">Trang 1 / 1</span>
+    <button id="nextBtn" type="button" class="btn btn-outline-primary btn-sm">Sau<i class="fa fa-chevron-right ms-1"></i></button>
+  </nav>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row g-4 py-5">
+      <div class="col-lg-4">
+        <a class="brand" href="/"><i class="fa fa-globe me-2"></i>Geo<b>Node</b></a>
+        <p class="small mt-3 mb-0" style="max-width:340px">Nền tảng Web GIS mã nguồn mở để quản lý, chia sẻ và khám phá dữ liệu không gian một cách trực quan.</p>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="mb-3">Liên kết</h6>
+        <ul class="list-unstyled small d-grid gap-2 mb-0">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/datasets">Layers</a></li>
+          <li><a href="/maps">Bản đồ</a></li>
+          <li><a href="/documents">Tài liệu</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 class="mb-3">Nền tảng</h6>
+        <ul class="list-unstyled small d-grid gap-2 mb-0">
+          <li><a href="https://geonode.org" target="_blank" rel="noopener">GeoNode</a></li>
+          <li><a href="https://mapstore.readthedocs.io" target="_blank" rel="noopener">MapStore</a></li>
+          <li><a href="https://geoserver.org" target="_blank" rel="noopener">GeoServer</a></li>
+          <li><a href="https://www.postgresql.org" target="_blank" rel="noopener">PostGIS</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3">
+        <h6 class="mb-3">Công nghệ</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge text-bg-primary">Bootstrap 5</span>
+          <span class="badge text-bg-secondary">Django</span>
+          <span class="badge text-bg-info">Google Fonts</span>
+          <span class="badge text-bg-success">GeoServer WMS</span>
+          <span class="badge text-bg-warning">PostGIS</span>
+        </div>
+      </div>
+    </div>
+    <div class="border-top border-secondary pt-3 pb-2 text-center small">© <span id="yr"></span> GeoNode <b>WebGIS</b> - Đồ án Phát triển ứng dụng Web GIS</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
+  let all = [];
+  let sort = 'newest';
+  let page = 1;
+  const PAGE = 12;
   const qEl = document.getElementById('q');
   const grid = document.getElementById('grid');
   const countline = document.getElementById('countline');
-  let all = [];
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  const sp = new URLSearchParams(location.search);
+  const q0 = sp.get('q');
+  if(q0){ qEl.value = q0; }
 
   function esc(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
   function ext(name){ return (name||'').split('.').pop().toUpperCase().slice(0,6); }
@@ -130,37 +192,79 @@
     return 'fa-file-text-o';
   }
 
-  function render(){
+  function filtered(){
     let list = all.slice();
     const q = qEl.value.trim().toLowerCase();
     if(q){ list = list.filter(d => (d.title||'').toLowerCase().includes(q)); }
-    countline.textContent = 'Hiển thị ' + list.length + ' tài liệu';
-    if(!list.length){
-      grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="fa fa-file-text-o"></i>Chưa có tài liệu nào'+
-        (q?'. Thử từ khóa khác.':'. Hãy tải lên tài liệu mới để bắt đầu.')+'</div>';
-      return;
-    }
-    grid.innerHTML = list.map(function(d){
-      const owner = (d.owner && d.owner.username) ? d.owner.username : 'unknown';
-      const detail = '/catalogue/#/document/' + (d.pk || d.id || '');
-      const thumb = d.thumbnail_url ? '<img src="'+esc(d.thumbnail_url)+'" alt="">' : '<div class="ph"><i class="fa '+fIcon(d.filename)+'"></i></div>';
-      return '<div class="card">'+
-        '<div class="thumb">'+thumb+'<span class="ext">'+esc(ext(d.filename))+'</span></div>'+
-        '<div class="card-body"><h3>'+esc(d.title)+'</h3>'+
-        '<div class="abs">'+esc(d.abstract||'Chưa có mô tả.')+'</div>'+
-        '<div class="meta"><span><i class="fa fa-user"></i>'+esc(owner)+'</span>'+
-        '<span><i class="fa fa-calendar"></i>'+esc((d.date||d.created||'').slice(0,10))+'</span></div></div>'+
-        '<div class="card-foot"><a class="btn-open" href="'+detail+'">Mở tài liệu <i class="fa fa-arrow-right"></i></a></div>'+
-      '</div>';
-    }).join('');
+    if(sort==='title'){ list.sort((a,b)=>(a.title||'').localeCompare(b.title)); }
+    else { list.sort((a,b)=>(b.date||b.created||'').localeCompare(a.date||a.created||'')); }
+    return list;
   }
 
-  qEl.addEventListener('input', render);
+  function updatePager(pages){
+    pageinfo.textContent = 'Trang ' + page + ' / ' + pages;
+    prevBtn.disabled = page <= 1;
+    nextBtn.disabled = page >= pages;
+  }
+
+  function render(){
+    const list = filtered();
+    const pages = Math.max(1, Math.ceil(list.length / PAGE));
+    if(page > pages) page = pages;
+    const start = (page-1)*PAGE;
+    const slice = list.slice(start, start+PAGE);
+    countline.textContent = 'Hiển thị ' + list.length + ' tài liệu' + (pages>1 ? ' \u2022 Trang ' + page + '/' + pages : '');
+    if(!slice.length){
+      grid.innerHTML = '<div class="col-12 text-center py-5 text-secondary"><i class="fa fa-file-text-o fa-3x d-block mb-2" style="opacity:.4"></i>'+
+        (qEl.value.trim()?'Chưa có tài liệu nào. Thử từ khóa khác.':'Chưa có tài liệu nào. Hãy tải lên tài liệu mới để bắt đầu.')+'</div>';
+      updatePager(1);
+      return;
+    }
+    grid.innerHTML = slice.map(function(d){
+      const owner = (d.owner && d.owner.username) ? d.owner.username : 'unknown';
+      const detail = '/catalogue/#/document/' + (d.pk || d.id || '');
+      const visual = d.thumbnail_url ? '<img class="thumb" src="'+esc(d.thumbnail_url)+'" alt="">'
+        : '<div class="thumb-ph"><i class="fa '+fIcon(d.filename)+'"></i></div>';
+      return '<div class="col">'+
+        '<div class="card h-100">'+
+          '<div class="position-relative">'+visual+
+            '<span class="badge text-bg-primary position-absolute top-0 start-0 m-2 text-uppercase">'+esc(ext(d.filename))+'</span>'+
+          '</div>'+
+          '<div class="card-body d-flex flex-column">'+
+            '<h3 class="card-title">'+esc(d.title)+'</h3>'+
+            '<p class="card-text mb-0 mt-1">'+esc(d.abstract||'Chưa có mô tả.')+'</p>'+
+            '<div class="meta d-flex flex-wrap gap-3 mt-2">'+
+              '<span><i class="fa fa-user me-1"></i>'+esc(owner)+'</span>'+
+              '<span><i class="fa fa-calendar me-1"></i>'+esc((d.date||d.created||'').slice(0,10))+'</span>'+
+            '</div>'+
+          '</div>'+
+          '<div class="card-footer d-flex justify-content-end">'+
+            '<a class="btn btn-sm btn-open" href="'+detail+'">Mở tài liệu <i class="fa fa-arrow-right ms-1"></i></a>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+    updatePager(pages);
+  }
+
+  qEl.addEventListener('input', function(){ page = 1; render(); });
+  prevBtn.addEventListener('click', function(){ if(page>1){ page--; render(); } });
+  nextBtn.addEventListener('click', function(){ page++; render(); });
+  document.querySelectorAll('.dropdown-item[data-sort]').forEach(function(a){
+    a.addEventListener('click', function(){
+      document.querySelectorAll('.dropdown-item[data-sort]').forEach(x => x.classList.remove('active'));
+      a.classList.add('active');
+      sort = a.getAttribute('data-sort');
+      document.getElementById('sortLabel').textContent = a.textContent.trim();
+      page = 1; render();
+    });
+  });
 
   fetch('/api/v2/documents/?page_size=100')
     .then(r=>r.json())
     .then(function(d){ all = d.documents||[]; render(); })
-    .catch(function(){ grid.innerHTML='<div class="empty" style="grid-column:1/-1"><i class="fa fa-exclamation-triangle"></i>Không thể tải dữ liệu.</div>'; });
+    .catch(function(){ grid.innerHTML='<div class="col-12 text-center py-5 text-secondary"><i class="fa fa-exclamation-triangle fa-3x d-block mb-2" style="opacity:.4"></i>Không thể tải dữ liệu.</div>'; });
 </script>
+{% include '../snippets/chatbox.html' %}
 </body>
 </html>
