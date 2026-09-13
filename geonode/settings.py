@@ -2301,3 +2301,23 @@ XLSX_UPLOAD_ENABLED = ast.literal_eval(os.getenv("XLSX_UPLOAD_ENABLED", "False")
 
 # Custom Chat app (footer live chat widget)
 INSTALLED_APPS += ("geonode.chat",)
+
+# MapStore viewer: rename catalogue service labels from "GeoNode" to "GITC Portal"
+MAPSTORE_CATALOGUE_SERVICES = {
+    "GITC Portal": {
+        "type": "geonode",
+        "url": None,
+        "autoload": True,
+        "title": "GITC Portal",
+    }
+}
+MAPSTORE_CATALOGUE_SELECTED_SERVICE = "GITC Portal"
+MAPSTORE_DASHBOARD_CATALOGUE_SERVICES = {
+    "GITC Portal": {
+        "type": "geonode",
+        "url": None,
+        "autoload": True,
+        "title": "GITC Portal",
+    }
+}
+MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = "GITC Portal"
