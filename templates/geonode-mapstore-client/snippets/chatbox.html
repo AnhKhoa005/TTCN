@@ -50,7 +50,15 @@
 .gn-chat-msg.gn-mine { align-self: flex-end; background: #2563eb; color: #fff; border-bottom-right-radius: 4px; }
 .gn-chat-msg.gn-mine .gn-chat-time { color: rgba(255,255,255,.7); }
 .gn-chat-msg.gn-other { align-self: flex-start; background: #fff; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+.gn-chat-msg.gn-ai { background: #eef4ff; border-color: #bfdbfe; }
+.gn-chat-msg.gn-ai .gn-chat-user { color: #1d4ed8; }
 .gn-chat-msg.gn-system { align-self: center; background: transparent; color: #64748b; font-size: 11.5px; padding: 2px 8px; }
+.gn-typing { opacity: .75; }
+.gn-dots::after {
+  content: ''; display: inline-block; width: 1.2em; text-align: left;
+  animation: gnChatDots 1.2s steps(4, end) infinite;
+}
+@keyframes gnChatDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; } }
 #gn-chat-input-row {
   display: flex; gap: 8px; padding: 12px 14px; background: #fff; border-top: 1px solid #e2e8f0; flex-shrink: 0;
 }
@@ -105,6 +113,7 @@
     timer: null,
     csrf: '',
     welcomed: false,
+    pendingAiId: 0,
     el: function(id){ return document.getElementById(id); }
   };
   window.GnChat = GnChat;
@@ -177,6 +186,10 @@
         msgs.innerHTML = '';
         if (w) msgs.appendChild(w);
         data.messages.forEach(GnChat.renderMsg);
+        if (GnChat.pendingAiId) {
+          var seen = data.messages.some(function(m){ return m.id === GnChat.pendingAiId; });
+          if (seen) { GnChat.pendingAiId = 0; GnChat.hideTyping(); }
+        }
         msgs.scrollTop = msgs.scrollHeight;
         var st2 = GnChat.el('gn-chat-status');
         if (st2) st2.textContent = 'Trực tuyến';
@@ -188,11 +201,13 @@
 
   GnChat.renderMsg = function(m){
     var isMine = false;
+    var isAi = (m.username === 'Trợ lý GITC Portal');
     try {
       if (window.GnChatUsername && m.username === window.GnChatUsername) isMine = true;
     } catch(e){}
+    if (isAi) isMine = false;
     var box = document.createElement('div');
-    box.className = 'gn-chat-msg ' + (isMine ? 'gn-mine' : 'gn-other');
+    box.className = 'gn-chat-msg ' + (isMine ? 'gn-mine' : 'gn-other') + (isAi ? ' gn-ai' : '');
     box.innerHTML = '<div class="gn-chat-user">' + GnChat.esc(m.username) + '</div>' +
                     '<div>' + GnChat.esc(m.message) + '</div>' +
                     '<div class="gn-chat-time">' + GnChat.esc(m.created_at) + '</div>';
@@ -207,7 +222,8 @@
     if (btn) btn.disabled = true;
     var params = new URLSearchParams();
     params.append('message', text);
-    fetch('/api/v2/chat/send/', {
+    GnChat.showTyping();
+    fetch('/api/v2/chat/ask/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': GnChat.csrf },
       body: params.toString()
@@ -216,13 +232,33 @@
       .then(function(data){
         if (data.ok) {
           ta.value = '';
+          if (data.ai) GnChat.pendingAiId = data.ai.id;
           GnChat.load();
         } else {
+          GnChat.hideTyping();
           alert(data.error || 'Không gửi được tin nhắn');
         }
       })
-      .catch(function(){ alert('Lỗi kết nối, thử lại sau'); })
+      .catch(function(){ GnChat.hideTyping(); alert('Lỗi kết nối, thử lại sau'); })
       .finally(function(){ if (btn) btn.disabled = false; });
+  };
+
+  GnChat.showTyping = function(){
+    var msgs = GnChat.el('gn-chat-messages');
+    if (!msgs) return;
+    var box = document.createElement('div');
+    box.className = 'gn-chat-msg gn-other gn-typing';
+    box.setAttribute('data-typing', '1');
+    box.innerHTML = '<div class="gn-chat-user">Trợ lý GITC Portal</div><div>Đang suy nghĩ<span class="gn-dots"></span></div>';
+    msgs.appendChild(box);
+    msgs.scrollTop = msgs.scrollHeight;
+  };
+
+  GnChat.hideTyping = function(){
+    var el = GnChat.el('gn-chat-messages');
+    if (!el) return;
+    var t = el.querySelector('[data-typing]');
+    if (t) t.remove();
   };
 
   GnChat.updateBadge = function(){

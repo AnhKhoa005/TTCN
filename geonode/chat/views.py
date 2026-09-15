@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 
 from .models import ChatMessage
+from .ai import answer_question
 
 
 def chat_messages(request):
@@ -46,5 +47,44 @@ def send_message(request):
             "username": msg.username,
             "message": msg.message,
             "created_at": msg.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+    )
+
+
+@csrf_exempt
+@require_POST
+def ask_question(request):
+    """Create a chat message and have the AI assistant reply, based on the
+    project data (RAG over GeoNode resources + Gemini)."""
+    text = (request.POST.get("message") or "").strip()
+    if not text:
+        return JsonResponse({"error": "Tin nhắn trống"}, status=400)
+    if len(text) > 2000:
+        return JsonResponse({"error": "Tin nhắn quá dài"}, status=400)
+
+    user = request.user if request.user.is_authenticated else None
+    username = user.username if user else "Khách"
+    msg = ChatMessage.objects.create(user=user, username=username, message=text)
+
+    ai_reply = answer_question(text)
+    ai_msg = ChatMessage.objects.create(
+        user=user, username="Trợ lý GITC Portal", message=ai_reply
+    )
+
+    return JsonResponse(
+        {
+            "ok": True,
+            "user": {
+                "id": msg.pk,
+                "username": msg.username,
+                "message": msg.message,
+                "created_at": msg.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            },
+            "ai": {
+                "id": ai_msg.pk,
+                "username": ai_msg.username,
+                "message": ai_msg.message,
+                "created_at": ai_msg.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            },
         }
     )

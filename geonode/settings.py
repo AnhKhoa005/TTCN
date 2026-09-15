@@ -2302,6 +2302,11 @@ XLSX_UPLOAD_ENABLED = ast.literal_eval(os.getenv("XLSX_UPLOAD_ENABLED", "False")
 # Custom Chat app (footer live chat widget)
 INSTALLED_APPS += ("geonode.chat",)
 
+# Chat AI assistant (RAG + Google Gemini)
+# GOOGLE_API_KEY is defined above and reused here as the Gemini API key.
+CHAT_GEMINI_MODEL = os.environ.get("CHAT_GEMINI_MODEL", "gemini-3.6-flash")
+CHAT_GEMINI_TIMEOUT = int(os.environ.get("CHAT_GEMINI_TIMEOUT", "40"))
+
 # MapStore viewer: rename catalogue service labels from "GeoNode" to "GITC Portal"
 MAPSTORE_CATALOGUE_SERVICES = {
     "GITC Portal": {
