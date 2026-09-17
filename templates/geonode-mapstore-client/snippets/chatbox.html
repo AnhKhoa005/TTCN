@@ -1,13 +1,15 @@
-<!-- ==================== LIVE CHATBOX WIDGET ==================== -->
+<!-- ==================== LIVE CHATBOX WIDGET (AI Assistant) ==================== -->
 <input type="hidden" id="gn-current-user" value="{% if user.is_authenticated %}{{ user.username }}{% endif %}">
+<input type="hidden" id="gn-current-user-id" value="{% if user.is_authenticated %}{{ user.id }}{% endif %}">
 <style>
 #gn-chat-fab {
   position: fixed; right: 24px; bottom: 24px; z-index: 9999;
   width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
-  background: #2563eb; color: #fff; box-shadow: 0 6px 20px rgba(37,99,235,.45);
-  display: flex; align-items: center; justify-content: center; transition: all .25s ease;
+  background: linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%); color: #fff;
+  box-shadow: 0 8px 24px rgba(37,99,235,.5); display: flex; align-items: center; justify-content: center;
+  transition: all .25s ease;
 }
-#gn-chat-fab:hover { transform: scale(1.08); background: #1d4ed8; }
+#gn-chat-fab:hover { transform: scale(1.08); box-shadow: 0 10px 28px rgba(37,99,235,.65); }
 #gn-chat-fab svg { width: 26px; height: 26px; }
 #gn-chat-fab .gn-chat-badge {
   position: absolute; top: -2px; right: -2px; min-width: 20px; height: 20px;
@@ -16,9 +18,9 @@
   padding: 0 5px; border: 2px solid #fff;
 }
 #gn-chat-box {
-  position: fixed; right: 24px; bottom: 92px; z-index: 9999; width: 360px; max-width: calc(100vw - 40px);
-  height: 480px; max-height: calc(100vh - 130px); background: #fff; border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(15,23,42,.25); border: 1px solid #e2e8f0;
+  position: fixed; right: 24px; bottom: 92px; z-index: 9999; width: 380px; max-width: calc(100vw - 40px);
+  height: 560px; max-height: calc(100vh - 130px); background: #fff; border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(15,23,42,.3); border: 1px solid #e2e8f0;
   display: none; flex-direction: column; overflow: hidden;
   font-family: 'Roboto', 'Segoe UI', -apple-system, sans-serif;
 }
@@ -26,53 +28,84 @@
 @keyframes gnChatIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 .gn-chat-header {
   background: linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%); color: #fff; padding: 14px 16px;
-  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 11px; flex-shrink: 0;
 }
 .gn-chat-header .gn-chat-avatar {
-  width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.2);
-  display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,.35);
 }
 .gn-chat-header h6 { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.2; }
 .gn-chat-header p { margin: 0; font-size: 12px; opacity: .85; }
 .gn-chat-close {
-  margin-left: auto; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; line-height: 1;
-  padding: 4px; border-radius: 6px;
+  margin-left: auto; background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; line-height: 1;
+  padding: 4px 6px; border-radius: 8px; transition: background .15s;
 }
-.gn-chat-close:hover { background: rgba(255,255,255,.15); }
-#gn-chat-current-user { margin-left: auto; font-size: 11px; opacity: .9; white-space: nowrap; }
+.gn-chat-close:hover { background: rgba(255,255,255,.18); }
 #gn-chat-messages {
-  flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
-  background: #f8fafc;
+  flex: 1; overflow-y: auto; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px;
+  background: #f1f5f9;
 }
-.gn-chat-msg { max-width: 82%; padding: 9px 13px; border-radius: 14px; font-size: 13.5px; line-height: 1.45; word-break: break-word; }
-.gn-chat-msg .gn-chat-user { font-size: 11px; font-weight: 700; margin-bottom: 2px; opacity: .8; }
-.gn-chat-msg .gn-chat-time { font-size: 10px; opacity: .55; margin-top: 4px; text-align: right; }
-.gn-chat-msg.gn-mine { align-self: flex-end; background: #2563eb; color: #fff; border-bottom-right-radius: 4px; }
+#gn-chat-messages::-webkit-scrollbar { width: 6px; }
+#gn-chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.gn-chat-msg { max-width: 82%; padding: 9px 13px; border-radius: 15px; font-size: 13.5px; line-height: 1.5; word-break: break-word; position: relative; }
+.gn-chat-msg .gn-chat-user { font-size: 11px; font-weight: 700; margin-bottom: 3px; opacity: .85; }
+.gn-chat-msg .gn-chat-time { font-size: 10px; opacity: .55; margin-top: 5px; text-align: right; }
+.gn-chat-msg.gn-mine { align-self: flex-end; background: #2563eb; color: #fff; border-bottom-right-radius: 4px; box-shadow: 0 2px 8px rgba(37,99,235,.25); }
+.gn-chat-msg.gn-mine .gn-chat-user { color: rgba(255,255,255,.85); }
 .gn-chat-msg.gn-mine .gn-chat-time { color: rgba(255,255,255,.7); }
-.gn-chat-msg.gn-other { align-self: flex-start; background: #fff; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
-.gn-chat-msg.gn-ai { background: #eef4ff; border-color: #bfdbfe; }
+.gn-chat-msg.gn-ai { align-self: flex-start; background: #fff; border: 1px solid #bfdbfe; border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(148,163,184,.15); }
 .gn-chat-msg.gn-ai .gn-chat-user { color: #1d4ed8; }
-.gn-chat-msg.gn-system { align-self: center; background: transparent; color: #64748b; font-size: 11.5px; padding: 2px 8px; }
-.gn-typing { opacity: .75; }
+.gn-chat-msg.gn-ai::before {
+  content: '🤖'; position: absolute; left: -30px; top: 8px; font-size: 18px; width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gn-chat-msg.gn-other { align-self: flex-start; background: #fff; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+.gn-chat-msg.gn-system { align-self: center; background: transparent; color: #64748b; font-size: 11.5px; padding: 2px 8px; max-width: 95%; }
+.gn-typing { opacity: .8; }
 .gn-dots::after {
-  content: ''; display: inline-block; width: 1.2em; text-align: left;
+  content: ''; display: inline-block; width: 1.4em; text-align: left;
   animation: gnChatDots 1.2s steps(4, end) infinite;
 }
 @keyframes gnChatDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; } }
-#gn-chat-input-row {
-  display: flex; gap: 8px; padding: 12px 14px; background: #fff; border-top: 1px solid #e2e8f0; flex-shrink: 0;
+.gn-quick-row {
+  display: flex; gap: 6px; padding: 8px 14px 2px; background: #fff; flex-shrink: 0;
+  overflow-x: auto; scrollbar-width: none;
 }
+.gn-quick-row::-webkit-scrollbar { display: none; }
+.gn-quick-chip {
+  white-space: nowrap; border: 1.5px solid #dbeafe; background: #eff6ff; color: #1d4ed8;
+  border-radius: 16px; padding: 5px 12px; font-size: 12px; cursor: pointer; font-family: inherit;
+  transition: all .15s; flex-shrink: 0;
+}
+.gn-quick-chip:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+.gn-chat-login {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 24px; text-align: center; background: #f1f5f9; color: #1e293b; font-size: 13.5px;
+}
+.gn-chat-login .gn-login-icon { font-size: 44px; }
+.gn-chat-login .gn-login-title { font-size: 16px; font-weight: 700; }
+.gn-chat-login .gn-login-desc { color: #64748b; line-height: 1.5; }
+.gn-login-btn {
+  background: linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%); color: #fff; border: none;
+  border-radius: 24px; padding: 10px 26px; font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: inherit; text-decoration: none; transition: transform .15s; box-shadow: 0 6px 16px rgba(37,99,235,.35);
+}
+.gn-login-btn:hover { transform: translateY(-1px); }
+#gn-chat-input-row { display: flex; gap: 8px; padding: 10px 14px 12px; background: #fff; border-top: 1px solid #e2e8f0; flex-shrink: 0; }
 #gn-chat-input {
-  flex: 1; border: 1.5px solid #e2e8f0; border-radius: 22px; padding: 9px 14px; font-size: 13px; outline: none;
-  resize: none; max-height: 80px; font-family: inherit;
+  flex: 1; border: 1.5px solid #e2e8f0; border-radius: 22px; padding: 10px 16px; font-size: 13px; outline: none;
+  resize: none; max-height: 88px; font-family: inherit; color: #0f172a; transition: border-color .15s;
 }
 #gn-chat-input:focus { border-color: #2563eb; }
+#gn-chat-input:disabled { background: #f1f5f9; color: #94a3b8; }
 #gn-chat-send {
-  width: 44px; height: 40px; border-radius: 22px; border: none; background: #2563eb; color: #fff; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .2s;
+  width: 46px; height: 42px; border-radius: 22px; border: none; background: linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);
+  color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: opacity .2s; box-shadow: 0 4px 10px rgba(37,99,235,.3);
 }
-#gn-chat-send:hover { background: #1d4ed8; }
-#gn-chat-send:disabled { background: #93c5fd; cursor: not-allowed; }
+#gn-chat-send:hover { opacity: .9; }
+#gn-chat-send:disabled { background: #93c5fd; cursor: not-allowed; box-shadow: none; }
 #gn-chat-send svg { width: 18px; height: 18px; }
 .gn-chat-hint { text-align: center; font-size: 11px; color: #94a3b8; padding: 6px; background: #fff; flex-shrink: 0; }
 @media (max-width: 480px) {
@@ -88,21 +121,22 @@
 
 <div id="gn-chat-box" role="dialog" aria-label="Chat">
   <div class="gn-chat-header">
-    <div class="gn-chat-avatar">👋</div>
+    <div class="gn-chat-avatar">🤖</div>
     <div>
-      <h6>Hỗ trợ trực tuyến</h6>
+      <h6>Trợ lý GITC Portal</h6>
       <p id="gn-chat-status">Đang kết nối...</p>
     </div>
     <button class="gn-chat-close" onclick="GnChat.toggle()" title="Đóng">&times;</button>
   </div>
   <div id="gn-chat-messages"></div>
-  <div class="gn-chat-hint">Đang đăng nhập sẽ hiển thị tên của bạn</div>
+  <div class="gn-quick-row" id="gn-quick-row"></div>
   <div id="gn-chat-input-row">
-    <textarea id="gn-chat-input" rows="1" placeholder="Nhập tin nhắn..."></textarea>
+    <textarea id="gn-chat-input" rows="1" placeholder="Nhập câu hỏi..."></textarea>
     <button id="gn-chat-send" onclick="GnChat.send()" title="Gửi">
       <svg fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
     </button>
   </div>
+  <div class="gn-chat-hint">Chỉ người đăng nhập mới chat được</div>
 </div>
 
 <script>
@@ -114,11 +148,20 @@
     csrf: '',
     welcomed: false,
     pendingAiId: 0,
+    loggedIn: false,
+    currentUserId: null,
     el: function(id){ return document.getElementById(id); }
   };
   window.GnChat = GnChat;
 
-  GnChat.WELCOME_TEXT = 'Xin chào bạn !';
+  GnChat.WELCOME_TEXT = 'Xin chào bạn!';
+  GnChat.QUICK_QUESTIONS = [
+    'Hệ thống có những tài liệu nào?',
+    'Có bao nhiêu layer Raster?',
+    'Cách tải dữ liệu về máy?',
+    'Làm sao để upload dữ liệu?',
+    'GITC Portal có những tính năng gì?'
+  ];
 
   GnChat.esc = function(s){
     var d = document.createElement('div');
@@ -128,15 +171,22 @@
 
   GnChat.init = function(){
     try { GnChat.csrf = document.cookie.split('; ').filter(function(c){return c.indexOf('csrftoken=')===0;})[0].split('=')[1]; } catch(e){ GnChat.csrf=''; }
-    try {
-      var mu = document.getElementById('gn-current-user');
-      if (mu && mu.value) window.GnChatUsername = mu.value;
-    } catch(e){}
+    var mu = GnChat.el('gn-current-user');
+    var muid = GnChat.el('gn-current-user-id');
+    if (mu && mu.value) { GnChat.loggedIn = true; window.GnChatUsername = mu.value; }
+    if (muid && muid.value) GnChat.currentUserId = parseInt(muid.value, 10);
+    GnChat.renderQuick();
     var ta = GnChat.el('gn-chat-input');
     if (ta) {
       ta.addEventListener('keydown', function(e){
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); GnChat.send(); }
       });
+    }
+    if (!GnChat.loggedIn) {
+      GnChat.showLoginGate();
+      GnChat.setStatus('Vui lòng đăng nhập');
+      GnChat.disableInput(true);
+      return;
     }
     GnChat.showWelcome();
     GnChat.load();
@@ -151,10 +201,56 @@
     if (fab) fab.style.display = GnChat.open ? 'none' : 'flex';
     if (GnChat.open) {
       var ta = GnChat.el('gn-chat-input');
-      if (ta) setTimeout(function(){ ta.focus(); }, 150);
-      GnChat.load();
+      if (ta && !ta.disabled) setTimeout(function(){ ta.focus(); }, 150);
+      if (GnChat.loggedIn) GnChat.load();
       GnChat.markSeen();
     }
+  };
+
+  GnChat.setStatus = function(t){
+    var st = GnChat.el('gn-chat-status');
+    if (st) st.textContent = t;
+  };
+
+  GnChat.renderQuick = function(){
+    var row = GnChat.el('gn-quick-row');
+    if (!row) return;
+    row.innerHTML = '';
+    GnChat.QUICK_QUESTIONS.forEach(function(q){
+      var b = document.createElement('button');
+      b.className = 'gn-quick-chip';
+      b.type = 'button';
+      b.textContent = q;
+      b.addEventListener('click', function(){
+        if (!GnChat.loggedIn) return;
+        var ta = GnChat.el('gn-chat-input');
+        if (ta) { ta.value = q; ta.dispatchEvent(new Event('input')); }
+        GnChat.send();
+      });
+      row.appendChild(b);
+    });
+  };
+
+  GnChat.showLoginGate = function(){
+    var msgs = GnChat.el('gn-chat-messages');
+    if (!msgs) return;
+    msgs.innerHTML = '';
+    var gate = document.createElement('div');
+    gate.className = 'gn-chat-login';
+    gate.innerHTML =
+      '<div class="gn-login-icon">🔐</div>' +
+      '<div class="gn-login-title">Đăng nhập để chat với AI</div>' +
+      '<div class="gn-login-desc">Trợ lý AI chỉ phục vụ người dùng đã đăng nhập. ' +
+      'Bạn cần đăng nhập để hỏi về dữ liệu và tính năng của GITC Portal.</div>' +
+      '<a class="gn-login-btn" href="/account/login/">Đăng nhập ngay</a>';
+    msgs.appendChild(gate);
+  };
+
+  GnChat.disableInput = function(disabled){
+    var ta = GnChat.el('gn-chat-input');
+    var btn = GnChat.el('gn-chat-send');
+    if (ta) ta.disabled = disabled;
+    if (btn) btn.disabled = disabled;
   };
 
   GnChat.showWelcome = function(){
@@ -162,10 +258,11 @@
     if (!msgs || GnChat.welcomed) return;
     GnChat.welcomed = true;
     var box = document.createElement('div');
-    box.className = 'gn-chat-msg gn-other';
+    box.className = 'gn-chat-msg gn-ai';
+    box.style.marginLeft = '30px';
     box.setAttribute('data-welcome', '1');
-    box.innerHTML = '<div class="gn-chat-user">Hỗ trợ</div>' +
-                    '<div>' + GnChat.esc(GnChat.WELCOME_TEXT) + ' Tôi có thể giúp gì cho bạn về dữ liệu GIS hôm nay?</div>';
+    box.innerHTML = '<div class="gn-chat-user">Trợ lý GITC Portal</div>' +
+                    '<div>' + GnChat.esc(GnChat.WELCOME_TEXT) + ' Tôi có thể giúp bạn tìm hiểu về dữ liệu và tính năng của hệ thống. Hãy đặt câu hỏi nhé!</div>';
     msgs.appendChild(box);
   };
 
@@ -175,10 +272,10 @@
       .then(function(data){
         var msgs = GnChat.el('gn-chat-messages');
         if (!msgs) return;
+        if (data.login_required) { GnChat.showLoginGate(); return; }
         GnChat.showWelcome();
         if (!data.messages || !data.messages.length) {
-          var st = GnChat.el('gn-chat-status');
-          if (st) st.textContent = 'Trực tuyến';
+          GnChat.setStatus('Trực tuyến');
           return;
         }
         GnChat.lastId = data.messages[data.messages.length - 1].id;
@@ -191,8 +288,7 @@
           if (seen) { GnChat.pendingAiId = 0; GnChat.hideTyping(); }
         }
         msgs.scrollTop = msgs.scrollHeight;
-        var st2 = GnChat.el('gn-chat-status');
-        if (st2) st2.textContent = 'Trực tuyến';
+        GnChat.setStatus('Trực tuyến');
         GnChat.updateBadge();
         if (GnChat.open) GnChat.markSeen();
       })
@@ -200,15 +296,15 @@
   };
 
   GnChat.renderMsg = function(m){
-    var isMine = false;
-    var isAi = (m.username === 'Trợ lý GITC Portal');
-    try {
-      if (window.GnChatUsername && m.username === window.GnChatUsername) isMine = true;
-    } catch(e){}
-    if (isAi) isMine = false;
+    var isAi = !!(m.is_ai || m.username === 'Trợ lý GITC Portal');
+    var isMine = !isAi && (
+      (GnChat.currentUserId && m.user_id === GnChat.currentUserId) ||
+      (window.GnChatUsername && m.username === window.GnChatUsername)
+    );
     var box = document.createElement('div');
-    box.className = 'gn-chat-msg ' + (isMine ? 'gn-mine' : 'gn-other') + (isAi ? ' gn-ai' : '');
-    box.innerHTML = '<div class="gn-chat-user">' + GnChat.esc(m.username) + '</div>' +
+    box.className = 'gn-chat-msg ' + (isAi ? 'gn-ai' : (isMine ? 'gn-mine' : 'gn-other'));
+    box.style.marginLeft = (isAi && !isMine) ? '30px' : '';
+    box.innerHTML = '<div class="gn-chat-user">' + GnChat.esc(m.username || (isAi ? 'Trợ lý GITC Portal' : '')) + '</div>' +
                     '<div>' + GnChat.esc(m.message) + '</div>' +
                     '<div class="gn-chat-time">' + GnChat.esc(m.created_at) + '</div>';
     GnChat.el('gn-chat-messages').appendChild(box);
@@ -217,11 +313,15 @@
   GnChat.send = function(){
     var ta = GnChat.el('gn-chat-input');
     var btn = GnChat.el('gn-chat-send');
+    if (!GnChat.loggedIn) { GnChat.showLoginGate(); return; }
     var text = ta.value.trim();
     if (!text) return;
     if (btn) btn.disabled = true;
     var params = new URLSearchParams();
     params.append('message', text);
+    var userMsg = { id: -1, user_id: GnChat.currentUserId, username: window.GnChatUsername || 'Tôi', message: text, created_at: '' };
+    GnChat.renderMsg(userMsg);
+    ta.value = '';
     GnChat.showTyping();
     fetch('/api/v2/chat/ask/', {
       method: 'POST',
@@ -230,8 +330,8 @@
     })
       .then(function(res){ return res.json(); })
       .then(function(data){
+        if (data.login_required) { GnChat.showLoginGate(); return; }
         if (data.ok) {
-          ta.value = '';
           if (data.ai) GnChat.pendingAiId = data.ai.id;
           GnChat.load();
         } else {
@@ -246,8 +346,10 @@
   GnChat.showTyping = function(){
     var msgs = GnChat.el('gn-chat-messages');
     if (!msgs) return;
+    GnChat.hideTyping();
     var box = document.createElement('div');
-    box.className = 'gn-chat-msg gn-other gn-typing';
+    box.className = 'gn-chat-msg gn-ai gn-typing';
+    box.style.marginLeft = '30px';
     box.setAttribute('data-typing', '1');
     box.innerHTML = '<div class="gn-chat-user">Trợ lý GITC Portal</div><div>Đang suy nghĩ<span class="gn-dots"></span></div>';
     msgs.appendChild(box);

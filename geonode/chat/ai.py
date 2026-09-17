@@ -18,11 +18,28 @@ import urllib.request
 
 from django.conf import settings
 
-SYSTEM_PROMPT = """Bạn là "Trợ lý GITC Portal", trợ lý ảo chuyên về nền tảng chia sẻ dữ liệu không gian GIS.
-Nhiệm vụ: trả lời bằng tiếng Việt, rõ ràng, ngắn gọn, dựa CHỈ vào dữ liệu được cung cấp bên dưới (context).
-Nếu câu hỏi không liên quan đến dữ liệu GIS hoặc thông tin nằm ngoài context, hãy nói rõ bạn chỉ hỗ trợ về dữ liệu của hệ thống.
-Khi kể về một tài nguyên (layer/bản đồ/tài liệu), hãy nhắc tên, loại (Raster/Vector/Bản đồ/Tài liệu), mô tả và đường dẫn chi tiết.
-Giữ câu trả lời gọn (khoảng 5-15 dòng), không bịa thông tin."""
+SYSTEM_PROMPT = """Bạn là "Trợ lý GITC Portal", trợ lý ảo thân thiện, chuyên nghiệp của nền tảng chia sẻ dữ liệu không gian GIS (GeoNode).
+Nguyên tắc hoạt động:
+1. Bạn có thể trò chuyện tự nhiên về mọi chủ đề (chào hỏi, giới thiệu, kiến thức GIS, địa lý...) như một trợ lý thông minh.
+2. Khi được hỏi về DỮ LIỆU, LAYER, BẢN ĐỒ, TÀI LIỆU hoặc tính năng của hệ thống, hãy dựa CHỈ vào phần "THÔNG TIN HỆ THỐNG (context)" được cung cấp. Không bịa thông tin, không bịa tài liệu hay layer không có thật.
+3. Khi kể về một tài nguyên, nhắc rõ: tên, loại (Raster/Vector/Bản đồ/Tài liệu), mô tả, người quản lý, đường dẫn chi tiết.
+4. Trả lời bằng tiếng Việt, rõ ràng, có cấu trúc, gọn gàng (5-15 dòng), dùng dấu đầu dòng/bullet nếu hợp lý.
+5. Khi câu hỏi yêu cầu thông tin nhạy cảm, bất hợp pháp, gây hại hoặc nằm ngoài khả năng của bạn, hãy từ chối khéo léo bằng tiếng Việt và gợi ý hướng khác."""
+
+# Mô tả tổng quan toàn bộ dự án để AI trả lời được các câu hỏi "chuyên sâu về project".
+PROJECT_PROFILE = """THÔNG TIN VỀ DỰ ÁN GITC PORTAL:
+- Tên dự án: GITC Portal - cổng thông tin chia sẻ dữ liệu không gian địa lý (WebGIS) dựa trên nền tảng GeoNode 4.x + MapStore, chạy bằng Docker Compose trên máy local (http://localhost).
+- Công nghệ: Django (Python), GeoNode, MapStore 2, GeoServer, PostgreSQL/PostGIS, Nginx, Bootstrap 5 + Arsha template, Docker.
+- Các trang chính:
+  * Trang chủ (/): hero + tìm kiếm, 4 chỉ số thống kê (số bản đồ/layer/tài liệu/người dùng), 6 tính năng chính, mục "Layers nổi bật" hiển thị các layer raster nổi bật, CTA, footer.
+  * Trang Layers (/datasets/): danh sách layer, tìm kiếm, lọc Raster/Vector, phân trang, bấm vào để xem chi tiết.
+  * Trang Maps (/maps/): danh sách bản đồ.
+  * Trang Documents (/documents/): danh sách tài liệu.
+  * Viewer bản đồ: mở layer/bản đồ để xem trên bản đồ tương tác (MapStore).
+- Chatbot: widget chat góc phải dưới, có AI trợ lý trả lời về dữ liệu và tính năng của hệ thống. CHỈ người ĐĂNG NHẬP mới được chat.
+- Nhân vật AI: "Trợ lý GITC Portal", trả lời tiếng Việt.
+- Mỗi tài nguyên dữ liệu là một "resource" và có trang chi tiết tại các URL dạng: /catalogue/#/dataset/<id>, /catalogue/#/map/<id>, /catalogue/#/document/<id>.
+- Người dùng có thể đăng ký, đăng nhập, xem và tải dữ liệu, upload dữ liệu mới, mở bản đồ, xem tài liệu."""
 
 _MODEL = getattr(settings, "CHAT_GEMINI_MODEL", "gemini-3.6-flash")
 _TIMEOUT = getattr(settings, "CHAT_GEMINI_TIMEOUT", 40)
@@ -52,6 +69,7 @@ def _tokens(text):
 def _resource_document(resource):
     """Return a dict describing a single GeoNode resource."""
     abstract = resource.abstract or ""
+    supplemental = resource.supplemental_information or ""
     keywords = [k.name for k in resource.keywords.all()[:10]]
     owner = resource.owner.username if resource.owner else None
     links = {}
@@ -66,6 +84,7 @@ def _resource_document(resource):
         "type": resource.resource_type,
         "subtype": getattr(resource, "subtype", None),
         "abstract": abstract,
+        "supplemental_information": supplemental,
         "keywords": keywords,
         "owner": owner,
         "category": getattr(getattr(resource, "category", None), "name", None),
@@ -211,6 +230,8 @@ def format_context(items):
             lines.append(f"   Phân loại: {d['subtype']}")
         if d.get("abstract"):
             lines.append(f"   Mô tả: {d['abstract'][:600]}")
+        if d.get("supplemental_information"):
+            lines.append(f"   Thông tin bổ sung: {d['supplemental_information'][:1500]}")
         if d.get("keywords"):
             lines.append(f"   Từ khóa: {', '.join(d['keywords'][:8])}")
         if d.get("category"):
@@ -243,11 +264,13 @@ def ask_gemini(question, context_text):
         f"{model}:generateContent?key={api_key}"
     )
     user_prompt = (
-        "DỮ LIỆU HỆ THỐNG (context):\n"
-        f"{context_text}\n\n"
+        "THÔNG TIN HỆ THỐNG (context):\n"
+        f"{context_text}\n\n\n"
+        f"{PROJECT_PROFILE}\n\n"
         "CÂU HỎI CỦA NGƯỜI DÙNG:\n"
         f"{question}\n\n"
-        "Hãy trả lời bằng tiếng Việt dựa trên dữ liệu trên."
+        "Hãy trả lời bằng tiếng Việt. Nếu câu hỏi về dữ liệu/tính năng hệ thống, dùng context ở trên; "
+        "nếu là trò chuyện thông thường, trả lời tự nhiên; nếu quá giới hạn, từ chối khéo."
     )
     payload = {
         "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
