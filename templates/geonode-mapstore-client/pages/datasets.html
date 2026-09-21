@@ -23,7 +23,7 @@
   .navbar .nav-link:hover { color: #fff; background: rgba(255,255,255,.12); }
   .navbar .nav-link.active { color: #fff; background: var(--blue); box-shadow: 0 4px 14px rgba(37,99,235,.45); }
   .navbar .user-chip { background: rgba(255,255,255,.12); border-radius: 2rem; padding: .28rem .85rem; color: #fff; font-size: .82rem; font-weight: 600; }
-  .hero { background: linear-gradient(115deg, var(--navy-deep) 0%, var(--navy) 45%, #2f5da3 78%, var(--blue) 135%); color: #fff; padding: 3.2rem 0 3rem; position: relative; }
+  .hero { background: linear-gradient(115deg, var(--navy-deep) 0%, var(--navy) 45%, #2f5da3 78%, var(--blue) 135%); color: #fff; padding: 3.2rem 0 3rem; position: relative; overflow: hidden; }
   .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: linear-gradient(90deg,#60a5fa,#2563eb,#60a5fa); }
   .crumb { font-size: .8rem; color: rgba(255,255,255,.65); letter-spacing: .03em; text-transform: uppercase; }
   .crumb a { color: #bbd7ff; text-decoration: none; }
@@ -34,6 +34,9 @@
   .hero-search .input-group { background: #fff; border-radius: .65rem; overflow: hidden; box-shadow: 0 14px 40px rgba(16,35,63,.35); }
   .hero-search .form-control { border: 0; font-size: 1rem; }
   .hero-search .form-control:focus { outline: none; box-shadow: none; }
+  .hero-wrap { position: relative; z-index: 1; }
+  .hero-earth { position: absolute; right: -70px; top: 50%; transform: translateY(-50%); width: 420px; border-radius: 50%; opacity: .95; box-shadow: 0 24px 80px rgba(0,0,0,.45), inset 0 0 60px rgba(255,255,255,.08); pointer-events: none; }
+  .hero-orb { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55) 0%, rgba(96,165,250,.28) 45%, transparent 70%); pointer-events: none; }
   .card { border: 1px solid var(--line); border-radius: 1rem; overflow: hidden; box-shadow: 0 2px 10px rgba(16,35,63,.06); transition: transform .18s, box-shadow .18s, border-color .18s; }
   .card:hover { transform: translateY(-5px); box-shadow: 0 18px 36px rgba(30,58,95,.16); border-color: #bcd0ee; }
   .thumb { width: 100%; height: 160px; object-fit: cover; -o-object-fit: cover; }
@@ -85,7 +88,7 @@
 </nav>
 
 <header class="hero">
-  <div class="container">
+  <div class="container hero-wrap">
     <div class="crumb"><a href="/">Trang chủ</a> / <span class="text-white fw-semibold">Layers</span></div>
     <h1 class="mb-1">Khám phá Layers</h1>
     <p class="mb-0">Danh sách các lớp dữ liệu không gian trên nền tảng GITC Portal.</p>
@@ -96,6 +99,9 @@
       </div>
     </div>
   </div>
+  <img src="/static/arsha/img/earth-space.jpg" alt="Trái đất 3D" class="hero-earth d-none d-lg-block">
+  <span class="hero-orb d-none d-lg-block" style="width:150px;height:150px;top:-40px;right:17%;"></span>
+  <span class="hero-orb d-none d-lg-block" style="width:90px;height:90px;bottom:-30px;right:12%;"></span>
 </header>
 
 <main class="container py-4">
@@ -234,7 +240,7 @@
           '<div class="card-body d-flex flex-column">'+
             '<h3 class="card-title">'+esc(l.title)+'</h3>'+
             '<span class="resname mt-1 mb-2">'+esc(l.alternate||l.name)+'</span>'+
-            '<p class="card-text mb-0">'+esc(l.raw_abstract && l.raw_abstract!=='No abstract provided'?l.raw_abstract:l.abstract||'Chưa có mô tả.')+'</p>'+
+            '<p class="card-text mb-0">'+esc((l.abstract && l.abstract!=='No abstract provided') ? l.abstract : 'Chưa có mô tả.')+'</p>'+
             '<div class="meta d-flex flex-wrap gap-3 mt-2">'+
               '<span><i class="fa fa-user me-1"></i>'+esc(owner)+'</span>'+
               '<span><i class="fa fa-calendar me-1"></i>'+esc((l.date||l.created||'').slice(0,10))+'</span>'+

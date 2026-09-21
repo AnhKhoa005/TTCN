@@ -34,11 +34,27 @@
                 --arsha-nav-font: 'Roboto', 'Segoe UI', sans-serif;
             }
             /* Hero nhỏ gọn hơn (ít chức năng) */
-            .gn-arsha #hero { min-height:0; padding:96px 0 52px; }
+            .gn-arsha #hero { min-height:0; padding:96px 0 52px; position:relative; overflow:hidden; }
+            .gn-arsha #hero::before {
+                content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+                background:
+                    radial-gradient(700px 420px at 88% 20%, rgba(71,178,228,.28), transparent 60%),
+                    radial-gradient(620px 380px at 12% 85%, rgba(37,99,235,.22), transparent 60%);
+            }
+            .gn-arsha #hero .container { position:relative; z-index:1; }
             .gn-arsha #hero h1 { font-size:40px; line-height:1.15; margin-bottom:.35rem; }
             .gn-arsha #hero p { font-size:17px; margin:0 0 22px; }
             .gn-arsha #hero .hero-img img { max-width:520px; }
-            .gn-arsha .gn-hero-search { margin:1.5rem 0 0; }
+            .gn-arsha #hero .hero-img .gn-earth-wrap {
+                position:relative; display:inline-block; border-radius:50%;
+                box-shadow:0 24px 80px rgba(20,45,90,.45), inset 0 0 60px rgba(120,200,255,.25);
+                overflow:hidden; line-height:0;
+            }
+            .gn-arsha #hero .hero-img .gn-earth-wrap img { border-radius:50%; }
+            /* Các yếu tố 3D bay xung quanh trái đất */
+            .gn-orb { position:absolute; border-radius:50%; background:rgba(120,200,255,.16); border:1.5px solid rgba(160,220,255,.45); pointer-events:none; }
+            .gn-orb-small { position:absolute; border-radius:50%; background:rgba(250,204,21,.85); box-shadow:0 0 12px rgba(250,204,21,.7); pointer-events:none; }
+            .gn-arsha #hero .gn-hero-search { margin:1.5rem 0 0; }
             /* Grid gọn, card đều nhau */
             .gn-arsha .services .service-item { width:100%; }
             .gn-arsha .services .service-item p { font-size:14.5px; line-height:1.65; }
@@ -155,7 +171,13 @@
                                 </div>
                             </div>
                             <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-out" data-aos-delay="200">
-                                <img src="/static/arsha/img/hero-img.png" class="img-fluid animated" alt="WebGIS">
+                                <div class="gn-earth-wrap">
+                                    <img src="/static/arsha/img/earth-space.jpg" class="img-fluid animated" alt="Trái đất 3D - GITC Portal">
+                                    <span class="gn-orb" style="width:120px;height:120px;top:-26px;right:34px"></span>
+                                    <span class="gn-orb" style="width:70px;height:70px;bottom:-14px;left:22px"></span>
+                                    <span class="gn-orb-small" style="width:12px;height:12px;top:18px;left:6%"></span>
+                                    <span class="gn-orb-small" style="width:9px;height:9px;right:10%;bottom:24%"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -266,6 +288,24 @@
                                 {% else %}
                                 <a class="cta-btn align-middle" href="/account/login/?next=/">{% trans "Đăng nhập" %}</a>
                                 {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Earth CTA banner: khám phá dữ liệu 3D -->
+                <section id="earth-cta" class="section" style="position:relative;overflow:hidden;padding:4.2rem 0;background:linear-gradient(115deg,#0b1e3f 0%,#163a66 55%,#2563eb 130%);color:#fff;">
+                    <img src="/static/arsha/img/earth-blue.jpg" alt="" style="position:absolute;right:-90px;top:50%;transform:translateY(-50%);width:460px;border-radius:50%;opacity:.9;box-shadow:0 30px 90px rgba(0,0,0,.45);">
+                    <div class="container" style="position:relative;z-index:1;">
+                        <div class="row gy-4 align-items-center">
+                            <div class="col-lg-8">
+                                <h3 style="font-weight:800;font-size:1.9rem;margin-bottom:.5rem;">{% trans "Khám phá dữ liệu không gian 3D" %}</h3>
+                                <p style="opacity:.88;font-size:1.05rem;max-width:640px;margin:0;">
+                                    {% trans "Từ địa hình cao, lớp phủ đất đến lượng mưa - trực quan hóa toàn bộ dữ liệu GIS của Việt Nam và thế giới ngay trên trình duyệt." %}
+                                </p>
+                            </div>
+                            <div class="col-lg-4 text-center text-lg-end">
+                                <a href="/datasets" class="cta-btn align-middle" style="text-decoration:none;">{% trans "Xem dữ liệu ngay" %}</a>
                             </div>
                         </div>
                     </div>
@@ -403,10 +443,10 @@
                         // featured layers grid (professional cards)
                         try {
                             var escH = function(s){ var d=document.createElement('div'); d.textContent=(s===undefined||s===null)?'':String(s); return d.innerHTML; };
-                            fetch('/api/v2/datasets/?page_size=8').then(r=>r.json()).then(function(d){
+                            fetch('/api/v2/datasets/?page_size=20').then(r=>r.json()).then(function(d){
                                 var grid = document.getElementById('gn-home-layers-grid');
                                 if(!grid) return;
-                                var list = (d.datasets||[]).slice(0,4);
+                                var list = (d.datasets||[]).slice(0,8);
                                 if(!list.length){ grid.innerHTML = '<div class="col-12 text-center text-secondary">Chưa có layer nào</div>'; return; }
                                 grid.innerHTML = list.map(function(l){
                                     var isRaster = (l.subtype==='raster') || l.sourcetype==='coverage' || l.sourcetype==='remote';
@@ -415,7 +455,7 @@
                                     var visual = l.thumbnail_url
                                         ? '<img src="'+escH(l.thumbnail_url)+'" alt="" loading="lazy">'
                                         : '<div class="thumb-ph"><i class="fa fa-'+(isRaster?'image':'map')+'"></i></div>';
-                                    var abs = (l.raw_abstract && l.raw_abstract!=='No abstract provided') ? l.raw_abstract : (l.abstract || 'Chưa có mô tả.');
+                                    var abs = (l.abstract && l.abstract!=='No abstract provided') ? l.abstract : 'Chưa có mô tả.';
                                     if(abs.length > 110) abs = abs.slice(0,110) + '...';
                                     return '<div class="col-md-6 col-lg-3">'+
                                         '<div class="gn-layer-card">'+
