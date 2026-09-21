@@ -253,6 +253,21 @@ def format_context(items):
 # ---------------------------------------------------------------------------
 # Gemini call (REST)
 # ---------------------------------------------------------------------------
+# Các mã lỗi tạm thời nên tự động thử lại (quá tải / giới hạn tốc độ / server lỗi).
+_RETRYABLE_CODES = frozenset({429, 500, 502, 503, 504})
+# Số lần thử lại tối đa + chờ (giây) giữa các lần thử (backoff tăng dần).
+_MAX_RETRIES = 3
+_RETRY_DELAYS = (2, 4, 8)
+
+
+def _read_error_detail(exc):
+    """Try to extract the human-readable error message from an HTTPError body."""
+    try:
+        return json.loads(exc.read().decode("utf-8")).get("error", {}).get("message", "")
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def ask_gemini(question, context_text):
     api_key = getattr(settings, "GOOGLE_API_KEY", None)
     if not api_key:
@@ -284,23 +299,28 @@ def ask_gemini(question, context_text):
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    try:
-        with urllib.request.urlopen(req, timeout=_TIMEOUT) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        candidates = data.get("candidates") or []
-        if not candidates:
-            return "AI không trả được câu trả lời cho câu hỏi này, bạn thử diễn đạt khác nhé."
-        parts = candidates[0].get("content", {}).get("parts", [])
-        return "".join(p.get("text", "") for p in parts).strip() or "AI trả lời trống."
-    except urllib.error.HTTPError as exc:
-        detail = ""
+
+    last_error = None
+    for attempt in range(_MAX_RETRIES + 1):
         try:
-            detail = json.loads(exc.read().decode("utf-8")).get("error", {}).get("message", "")
-        except Exception:  # noqa: BLE001
-            pass
-        return f"Lỗi AI (HTTP {exc.code}): {detail or exc.reason}"
-    except Exception as exc:  # noqa: BLE001
-        return f"Lỗi kết nối AI: {exc}"
+            with urllib.request.urlopen(req, timeout=_TIMEOUT) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            candidates = data.get("candidates") or []
+            if not candidates:
+                return "AI không trả được câu trả lời cho câu hỏi này, bạn thử diễn đạt khác nhé."
+            parts = candidates[0].get("content", {}).get("parts", [])
+            return "".join(p.get("text", "") for p in parts).strip() or "AI trả lời trống."
+        except urllib.error.HTTPError as exc:
+            last_error = f"Lỗi AI (HTTP {exc.code}): {_read_error_detail(exc) or exc.reason}"
+            if exc.code not in _RETRYABLE_CODES or attempt >= _MAX_RETRIES:
+                return last_error
+            time.sleep(_RETRY_DELAYS[attempt])
+        except Exception as exc:  # noqa: BLE001
+            last_error = f"Lỗi kết nối AI: {exc}"
+            if attempt >= _MAX_RETRIES:
+                return last_error
+            time.sleep(_RETRY_DELAYS[attempt])
+    return last_error
 
 
 def answer_question(question):
