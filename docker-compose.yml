@@ -162,6 +162,50 @@ services:
       - redisdata:/data
     restart: unless-stopped
 
+  # Logto - tự host Identity Provider (OIDC) cho đăng nhập chính của GITC Portal.
+  # Cổng 3001: core API + màn hình đăng nhập; 3002: Admin Console.
+  # Docs: https://docs.logto.io/logto-oss/
+  logto:
+    image: svhd/logto:${LOGTO_TAG:-latest}
+    container_name: logto4${COMPOSE_PROJECT_NAME}
+    entrypoint: ["sh", "-c", "npm run cli db seed -- --swe && npm start"]
+    depends_on:
+      logto-postgres:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    environment:
+      - TRUST_PROXY_HEADER=1
+      - ENDPOINT=http://localhost:3001
+      - ADMIN_ENDPOINT=http://localhost:3002
+      - DB_URL=postgres://logto:${LOGTO_DB_PASSWORD:-logto}@logto-postgres:5432/logto
+      - PRIVATE_KEY_ROTATION_GRACE_PERIOD=1
+    restart: unless-stopped
+    healthcheck:
+      test: "node -e \"fetch('http://localhost:3001/api/status').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+      start_period: 60s
+      interval: 30s
+      timeout: 20s
+      retries: 5
+
+  # Database riêng cho Logto (không dùng chung PostGIS của GeoNode).
+  logto-postgres:
+    image: postgres:16-alpine
+    container_name: logtodb4${COMPOSE_PROJECT_NAME}
+    environment:
+      - POSTGRES_DB=logto
+      - POSTGRES_USER=logto
+      - POSTGRES_PASSWORD=${LOGTO_DB_PASSWORD:-logto}
+    volumes:
+      - logto-dbdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: "pg_isready -U logto -d logto"
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
 volumes:
   statics:
     name: ${COMPOSE_PROJECT_NAME}-statics
@@ -183,3 +227,5 @@ volumes:
     name: ${COMPOSE_PROJECT_NAME}-tmp
   redisdata:
     name: ${COMPOSE_PROJECT_NAME}-redisdata
+  logto-dbdata:
+    name: ${COMPOSE_PROJECT_NAME}-logtodbdata

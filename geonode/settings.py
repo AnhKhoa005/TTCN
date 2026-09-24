@@ -2008,9 +2008,9 @@ _AZURE_SOCIALACCOUNT_PROVIDER = {
         "User.Read",
         "openid",
     ],
-    "AUTH_PARAMS": {
+"AUTH_PARAMS": {
         "access_type": "online",
-        "prompt": "select_account",
+        "prompt": "consent",
     },
     "COMMON_FIELDS": {"email": "mail", "last_name": "surname", "first_name": "givenName"},
     "UID_FIELD": "sub",
@@ -2030,7 +2030,7 @@ _GOOGLE_SOCIALACCOUNT_PROVIDER = {
     ],
     "AUTH_PARAMS": {
         "access_type": "online",
-        "prompt": "select_account consent",
+        "prompt": "consent",
     },
     "COMMON_FIELDS": {"email": "email", "last_name": "family_name", "first_name": "given_name"},
     "GROUP_ROLE_MAPPER_CLASS": SOCIALACCOUNT_GROUP_ROLE_MAPPER,
@@ -2041,7 +2041,33 @@ _GOOGLE_SOCIALACCOUNT_PROVIDER = {
     "OAUTH_PKCE_ENABLED": True,
 }
 
-SOCIALACCOUNT_PROVIDERS_DEFS = {"azure": _AZURE_SOCIALACCOUNT_PROVIDER, "google": _GOOGLE_SOCIALACCOUNT_PROVIDER}
+_LOGTO_SOCIALACCOUNT_PROVIDER = {
+    "NAME": "Logto",
+    "SCOPE": [
+        "openid",
+        "profile",
+        "email",
+        "offline_access",
+    ],
+    "AUTH_PARAMS": {
+        "access_type": "online",
+        "prompt": "consent",
+    },
+    "COMMON_FIELDS": {"email": "email", "last_name": "family_name", "first_name": "given_name"},
+    "UID_FIELD": "sub",
+    "GROUP_ROLE_MAPPER_CLASS": SOCIALACCOUNT_GROUP_ROLE_MAPPER,
+    "ACCOUNT_CLASS": "geonode.people.socialaccount.providers.geonode_openid_connect.provider.GenericOpenIDConnectProviderAccount",
+    "ACCESS_TOKEN_URL": os.environ.get("LOGTO_ACCESS_TOKEN_URL", "http://logto:3001/oidc/token"),
+    "AUTHORIZE_URL": os.environ.get("LOGTO_AUTHORIZE_URL", "http://localhost:3001/oidc/auth"),
+    "ID_TOKEN_ISSUER": os.environ.get("LOGTO_ID_TOKEN_ISSUER", "http://localhost:3001/oidc"),
+    "PROFILE_URL": os.environ.get("LOGTO_PROFILE_URL", "http://logto:3001/oidc/me"),
+}
+
+SOCIALACCOUNT_PROVIDERS_DEFS = {
+    "azure": _AZURE_SOCIALACCOUNT_PROVIDER,
+    "google": _GOOGLE_SOCIALACCOUNT_PROVIDER,
+    "logto": _LOGTO_SOCIALACCOUNT_PROVIDER,
+}
 
 _SOCIALACCOUNT_PROVIDER = os.environ.get("SOCIALACCOUNT_PROVIDER", "google")
 SOCIALACCOUNT_PROVIDERS = {
