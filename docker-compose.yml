@@ -180,11 +180,12 @@ services:
       - "3002:3002"
     environment:
       - TRUST_PROXY_HEADER=1
-      - ENDPOINT=http://localhost
+      - ENDPOINT=http://localhost:3001
       - ADMIN_ENDPOINT=http://localhost:3002
       - DB_URL=postgres://logto:${LOGTO_DB_PASSWORD:-logto}@logto-postgres:5432/logto
       - REDIS_URL=redis://redis:6379/1
       - COOKIE_PATH=/
+      - LOGTO_SERVER_URL=http://logto:3001
       - PRIVATE_KEY_ROTATION_GRACE_PERIOD=1
     restart: unless-stopped
     depends_on:
