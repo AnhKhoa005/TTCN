@@ -171,3 +171,16 @@ def metadata_update_redirect(request):
     url = request.POST["url"]
     client_redirect_url = hookset.metadata_update_redirect(url, request=request)
     return HttpResponse(content=client_redirect_url)
+
+
+def logto_oidc_callback(request, provider_id=None):
+    """OIDC callback mounted at /accounts/<provider_id>/login/callback/.
+
+    allauth's OpenIDConnectOAuth2Adapter.get_callback_url() reverses the
+    hardcoded name "openid_connect_callback" with args=[provider_id], so this
+    route must expose that name and capture the provider id.
+    """
+    from allauth.socialaccount.providers.openid_connect.views import callback as oidc_callback
+
+    provider_id = provider_id or getattr(settings, "SOCIALACCOUNT_OIDC_PROVIDER", "geonode_openid_connect")
+    return oidc_callback(request, provider_id)

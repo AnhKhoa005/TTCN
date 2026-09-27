@@ -44,7 +44,6 @@ from geonode import geoserver
 from geonode.utils import check_ogc_backend
 from geonode.base import register_url_event
 from .people.views import CustomSignupView, CustomLoginView, set_session_language
-from allauth.socialaccount.providers.openid_connect.views import callback as oidc_callback
 from oauth2_provider.urls import app_name as oauth2_app_name, base_urlpatterns, oidc_urlpatterns
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -100,10 +99,19 @@ urlpatterns += [
     # Social views
     re_path(r"^account/signup/", CustomSignupView.as_view(), name="account_signup"),
     re_path(r"^account/login/", CustomLoginView.as_view(), name="account_login"),
-    # Direct OIDC callback for Logto (uses /accounts/ prefix to match Logto redirect URI)
-    re_path(r"^accounts/geonode_openid_connect/login/callback/$", lambda request: oidc_callback(request, provider_id="geonode_openid_connect"), name="geonode_openid_connect_callback"),
+    # OIDC callback for Logto. allauth reverses the hardcoded name
+    # "openid_connect_callback" with args=[provider_id], so we must expose that
+    # name here and capture the provider id.
+    re_path(
+        r"^accounts/(?P<provider_id>[^/]+)/login/callback/$",
+        views.logto_oidc_callback,
+        name="openid_connect_callback",
+    ),
     # Logout URL for /account/ prefix (backward compatibility) - redirect to home after logout
     re_path(r"^account/logout/$", custom_logout, name="account_logout"),
+    # allauth's own /accounts/login/ entry point (used by the MapStore navbar
+    # "Sign in" button) also hands over to Logto, shadowing the include below.
+    re_path(r"^accounts/login/$", CustomLoginView.as_view(), name="accounts_login_logto"),
     # allauth URLs under /accounts/ for Logto redirect URI compatibility
     re_path(r"^accounts/", include("allauth.urls")),
     re_path(r"^invitations/", include("geonode.invitations.urls", namespace="geonode.invitations")),

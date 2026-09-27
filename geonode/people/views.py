@@ -22,6 +22,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.http import urlencode
 from django.utils.translation import gettext_lazy as _
 from django.contrib.sites.models import Site
 from django.conf import settings
@@ -50,7 +51,33 @@ class SetUserLayerPermission(View):
         return user_and_group_permission(request, "profile")
 
 
+def _logto_login_url(request, process="login"):
+    """Build the allauth URL that hands the user over to the Logto provider.
+
+    Returns None when the OIDC provider is disabled, so callers can fall back
+    to the local GeoNode form.
+    """
+    if not getattr(settings, "SOCIALACCOUNT_OIDC_PROVIDER_ENABLED", False):
+        return None
+    provider_id = getattr(settings, "SOCIALACCOUNT_OIDC_PROVIDER", "geonode_openid_connect")
+    try:
+        url = reverse(f"{provider_id}_login")
+    except Exception:
+        return None
+    query = {"process": process}
+    next_url = request.GET.get("next")
+    if next_url:
+        query["next"] = next_url
+    return f"{url}?{urlencode(query)}"
+
+
 class CustomSignupView(SignupView):
+    def get(self, request, *args, **kwargs):
+        target = _logto_login_url(request, process="signup")
+        if target:
+            return redirect(target)
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         ret = super().get_context_data(**kwargs)
         ret.update({"account_geonode_local_signup": settings.SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP})
@@ -63,6 +90,12 @@ class CustomSignupView(SignupView):
 
 class CustomLoginView(LoginView):
     template_name = "people/account_login.html"
+
+    def get(self, request, *args, **kwargs):
+        target = _logto_login_url(request, process="login")
+        if target:
+            return redirect(target)
+        return super().get(request, *args, **kwargs)
 
 
 @login_required
