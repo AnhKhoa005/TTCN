@@ -20,7 +20,7 @@ from django.contrib.auth.decorators import login_required
 from geonode.client.hooks import hookset
 import json
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django import forms
 from django.apps import apps
 from django.db.models import Q

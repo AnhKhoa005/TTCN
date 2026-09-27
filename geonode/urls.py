@@ -46,6 +46,12 @@ from geonode.base import register_url_event
 from .people.views import CustomSignupView, CustomLoginView, set_session_language
 from allauth.socialaccount.providers.openid_connect.views import callback as oidc_callback
 from oauth2_provider.urls import app_name as oauth2_app_name, base_urlpatterns, oidc_urlpatterns
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def custom_logout(request):
+    logout(request)
+    return redirect("/")
 
 admin.autodiscover()
 
@@ -96,6 +102,8 @@ urlpatterns += [
     re_path(r"^account/login/", CustomLoginView.as_view(), name="account_login"),
     # Direct OIDC callback for Logto (uses /accounts/ prefix to match Logto redirect URI)
     re_path(r"^accounts/geonode_openid_connect/login/callback/$", lambda request: oidc_callback(request, provider_id="geonode_openid_connect"), name="geonode_openid_connect_callback"),
+    # Logout URL for /account/ prefix (backward compatibility) - redirect to home after logout
+    re_path(r"^account/logout/$", custom_logout, name="account_logout"),
     # allauth URLs under /accounts/ for Logto redirect URI compatibility
     re_path(r"^accounts/", include("allauth.urls")),
     re_path(r"^invitations/", include("geonode.invitations.urls", namespace="geonode.invitations")),

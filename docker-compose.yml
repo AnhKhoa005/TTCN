@@ -161,6 +161,12 @@ services:
     volumes:
       - redisdata:/data
     restart: unless-stopped
+    healthcheck:
+      test: "redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   # Logto - tự host Identity Provider (OIDC) cho đăng nhập chính của GITC Portal.
   # Cổng 3001: core API + màn hình đăng nhập; 3002: Admin Console.
@@ -169,19 +175,23 @@ services:
     image: svhd/logto:${LOGTO_TAG:-latest}
     container_name: logto4${COMPOSE_PROJECT_NAME}
     entrypoint: ["sh", "-c", "npm run cli db seed -- --swe && npm start"]
-    depends_on:
-      logto-postgres:
-        condition: service_healthy
     ports:
       - "3001:3001"
       - "3002:3002"
     environment:
       - TRUST_PROXY_HEADER=1
-      - ENDPOINT=http://localhost:3001
+      - ENDPOINT=http://localhost
       - ADMIN_ENDPOINT=http://localhost:3002
       - DB_URL=postgres://logto:${LOGTO_DB_PASSWORD:-logto}@logto-postgres:5432/logto
+      - REDIS_URL=redis://redis:6379/1
+      - COOKIE_PATH=/
       - PRIVATE_KEY_ROTATION_GRACE_PERIOD=1
     restart: unless-stopped
+    depends_on:
+      logto-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     healthcheck:
       test: "node -e \"fetch('http://localhost:3001/api/status').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
       start_period: 60s
