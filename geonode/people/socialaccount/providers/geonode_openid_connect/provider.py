@@ -54,6 +54,11 @@ class GenericOpenIDConnectProvider(OAuth2Provider):
     )
     oauth2_adapter_class = GenericOpenIDConnectAdapter
 
+    @property
+    def server_url(self):
+        """Return the OIDC server URL from provider settings."""
+        return getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("SERVER_URL", "")
+
     def get_default_scope(self):
         scope = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("SCOPE", "")
         return scope
