@@ -109,10 +109,16 @@ class GenericOpenIDConnectProvider(OAuth2Provider):
 
     def extract_uid(self, data):
         _uid_field = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("UID_FIELD", None)
-        if _uid_field:
-            return data.get(_uid_field)
-        else:
-            return data.get("uid", data.get("sub", data.get("id")))
+        candidates = [_uid_field] if _uid_field else []
+        candidates += ["sub", "uid", "id", "oid"]
+        for candidate in candidates:
+            if not candidate:
+                continue
+            value = data.get(candidate)
+            # OIDC identifiers are strings; Logto returns them as such.
+            if value is not None and str(value).strip():
+                return str(value)
+        return None
 
     def extract_common_fields(self, data):
         _common_fields = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("COMMON_FIELDS", {})

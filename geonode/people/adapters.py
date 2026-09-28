@@ -376,8 +376,7 @@ class GenericOpenIDConnectAdapter(OAuth2Adapter, SocialAccountAdapter):
                     # protected by TLS between this library and Google, we
                     # are allowed to skip checking the token signature
                     # according to the OpenID Connect Core 1.0
-                    # specification.
-                    # https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
+                    # specification.                    # https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
                     options={
                         "verify_signature": False,
                         "verify_iss": True,
@@ -390,6 +389,30 @@ class GenericOpenIDConnectAdapter(OAuth2Adapter, SocialAccountAdapter):
                 extra_data.update(extra_data_id_token)
             except jwt.PyJWTError as e:
                 raise OAuth2Error("Invalid id_token") from e
+
+        # The OIDC spec guarantees ``sub`` in the id_token, and Logto also
+        # returns it from userinfo, but a provider is free to omit either. The
+        # uid is what allauth keys the SocialAccount on, so make sure we have
+        # one before handing the payload over: extract_uid() otherwise returns
+        # None and allauth raises "uid must be a string".
+        if not extra_data.get("sub"):
+            logger.warning(
+                "OIDC provider %s returned no 'sub' claim; "
+                "token response keys=%s, profile keys=%s",
+                PROVIDER_ID,
+                sorted(response.keys()) if hasattr(response, "keys") else response,
+                sorted(extra_data.keys()),
+            )
+            for fallback in ("uid", "id", "oid", "user_id"):
+                if extra_data.get(fallback):
+                    extra_data["sub"] = extra_data[fallback]
+                    break
+            else:
+                raise OAuth2Error(
+                    "The OIDC provider returned neither a 'sub' claim nor any usable identifier "
+                    f"(claims received: {sorted(extra_data.keys())})"
+                )
+
         login = self.get_provider().sociallogin_from_response(request, extra_data)
         return login
 
