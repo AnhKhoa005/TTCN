@@ -23,6 +23,8 @@ These are used in order to extend the default authorization provided by
 django-allauth.
 
 """
+from urllib.parse import urlsplit
+
 from django.conf import settings
 from django.utils.module_loading import import_string
 
@@ -56,21 +58,39 @@ class GenericOpenIDConnectProvider(OAuth2Provider):
 
     @property
     def server_url(self):
-        """Base URL of the OIDC provider, as seen from this process.
+        """In-cluster OIDC discovery endpoint, as seen from this process.
 
         django-allauth's OpenIDConnectOAuth2Adapter does
-        ``sess.get(provider.server_url)`` and then reads the result as the
-        provider's OIDC discovery document, so this must be the in-cluster
-        *discovery* endpoint. A bare host such as ``http://logto:3001`` makes
-        Logto answer with a redirect to its browser-only /unknown-session page,
-        which requests then follows and fails with ConnectionError.
+        ``sess.get(provider.server_url)`` and then reads the response as the
+        provider's OIDC discovery document, so this must be the *discovery*
+        endpoint. Two mistakes are easy to make here and both break the
+        callback with a hard 500:
+
+        * a bare host (``http://logto:3001``) makes Logto answer with a
+          redirect to its browser-only /unknown-session page, which requests
+          then follows and fails with ConnectionError;
+        * omitting the ``/oidc`` base path yields a 404.
+
+        SERVER_URL is the explicit override; otherwise the issuer - which is
+        by definition the issuer of the id_token - supplies the base path, and
+        only its host is swapped for the in-cluster one.
         """
-        base = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("SERVER_URL", "").rstrip("/")
-        if not base:
+        provider_settings = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {})
+
+        base = (provider_settings.get("SERVER_URL") or "").strip().rstrip("/")
+        if base:
+            if base.endswith("/.well-known/openid-configuration"):
+                return base
+            return f"{base}/.well-known/openid-configuration"
+
+        issuer = (provider_settings.get("ID_TOKEN_ISSUER") or "").strip().rstrip("/")
+        if not issuer:
             return ""
-        if base.endswith("/.well-known/openid-configuration"):
-            return base
-        return f"{base}/.well-known/openid-configuration"
+        # Keep the issuer's base path, but swap the public host for the
+        # in-cluster one so the lookup never leaves the Docker network.
+        parts = urlsplit(issuer)
+        internal = provider_settings.get("SERVER_HOST") or "http://logto:3001"
+        return f"{internal.rstrip('/')}{parts.path}/.well-known/openid-configuration"
 
     def get_default_scope(self):
         scope = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("SCOPE", "")

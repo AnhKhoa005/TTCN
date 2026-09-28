@@ -2063,7 +2063,7 @@ _LOGTO_SOCIALACCOUNT_PROVIDER = {
     "AUTHORIZE_URL": os.environ.get("LOGTO_AUTHORIZE_URL", "http://localhost:3001/oidc/auth"),
     "ID_TOKEN_ISSUER": os.environ.get("LOGTO_ID_TOKEN_ISSUER", "http://localhost:3001/oidc"),
     "PROFILE_URL": os.environ.get("LOGTO_PROFILE_URL", "http://logto:3001/oidc/me"),
-    "SERVER_URL": os.environ.get("LOGTO_SERVER_URL", "http://localhost:3001"),
+    "SERVER_URL": os.environ.get("LOGTO_SERVER_URL", "http://logto:3001/oidc"),
 }
 
 SOCIALACCOUNT_PROVIDERS_DEFS = {
