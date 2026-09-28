@@ -35,11 +35,11 @@ services:
     << : *default-common-django
     container_name: django4${COMPOSE_PROJECT_NAME}
     healthcheck:
-      test: "curl -m 10 --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://django:8000/"
-      start_period: 60s
+      test: "curl -m 30 --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://django:8000/"
+      start_period: 300s
       interval: 60s
-      timeout: 10s
-      retries: 2
+      timeout: 30s
+      retries: 3
     environment:
       - IS_CELERY=False
     entrypoint: ["/usr/src/geonode/entrypoint.sh"]
