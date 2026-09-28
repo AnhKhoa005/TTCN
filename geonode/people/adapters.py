@@ -396,13 +396,15 @@ class GenericOpenIDConnectAdapter(OAuth2Adapter, SocialAccountAdapter):
         # one before handing the payload over: extract_uid() otherwise returns
         # None and allauth raises "uid must be a string".
         if not extra_data.get("sub"):
-            logger.warning(
-                "OIDC provider %s returned no 'sub' claim; "
-                "token response keys=%s, profile keys=%s",
-                PROVIDER_ID,
-                sorted(response.keys()) if hasattr(response, "keys") else response,
-                sorted(extra_data.keys()),
+            diagnostic = (
+                f"[OIDC-DEBUG] no 'sub' claim from provider '{PROVIDER_ID}'. "
+                f"token response keys={sorted(response.keys()) if hasattr(response, 'keys') else response}, "
+                f"merged profile keys={sorted(extra_data.keys())}, "
+                f"profile_url={self.profile_url}, id_token_present={'id_token' in response}"
             )
+            # print() so the message lands in the uWSGI log next to the traceback.
+            print(diagnostic, flush=True)
+            logger.warning(diagnostic)
             for fallback in ("uid", "id", "oid", "user_id"):
                 if extra_data.get(fallback):
                     extra_data["sub"] = extra_data[fallback]
