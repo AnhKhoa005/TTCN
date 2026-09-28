@@ -37,6 +37,26 @@ from geonode.people.adapters import GenericOpenIDConnectAdapter
 PROVIDER_ID = getattr(settings, "SOCIALACCOUNT_OIDC_PROVIDER", "geonode_openid_connect")
 
 
+def _pick_data(data):
+    """Unwrap the OIDC payload into a flat claim mapping.
+
+    django-allauth >= 65.11 hands the provider a *nested* dict:
+    ``{"userinfo": {...}, "id_token": {...}}``, and its own providers call
+    ``_pick_data()`` before reading any claim. This GeoNode provider predates
+    that change and read ``data.get("sub")`` directly, so every lookup hit the
+    nesting level and returned None, which allauth rejects with
+    "uid must be a string: None". Userinfo is preferred because it carries
+    more claims than the id_token, exactly as allauth does.
+    """
+    if not isinstance(data, dict):
+        return data
+    for key in ("userinfo", "id_token"):
+        nested = data.get(key)
+        if isinstance(nested, dict) and nested:
+            return nested
+    return data
+
+
 class GenericOpenIDConnectProviderAccount(ProviderAccount):
     def to_str(self):
         dflt = super(GenericOpenIDConnectProviderAccount, self).to_str()
@@ -108,6 +128,7 @@ class GenericOpenIDConnectProvider(OAuth2Provider):
         return ret
 
     def extract_uid(self, data):
+        data = _pick_data(data)
         _uid_field = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("UID_FIELD", None)
         candidates = [_uid_field] if _uid_field else []
         candidates += ["sub", "uid", "id", "oid"]
@@ -121,6 +142,7 @@ class GenericOpenIDConnectProvider(OAuth2Provider):
         return None
 
     def extract_common_fields(self, data):
+        data = _pick_data(data)
         _common_fields = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("COMMON_FIELDS", {})
         __common_fields_data = {}
         for _common_field in _common_fields:
@@ -128,6 +150,7 @@ class GenericOpenIDConnectProvider(OAuth2Provider):
         return __common_fields_data
 
     def extract_email_addresses(self, data):
+        data = _pick_data(data)
         addresses = []
         email = data.get("email")
         if email:
