@@ -56,8 +56,21 @@ class GenericOpenIDConnectProvider(OAuth2Provider):
 
     @property
     def server_url(self):
-        """Return the OIDC server URL from provider settings."""
-        return getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("SERVER_URL", "")
+        """Base URL of the OIDC provider, as seen from this process.
+
+        django-allauth's OpenIDConnectOAuth2Adapter does
+        ``sess.get(provider.server_url)`` and then reads the result as the
+        provider's OIDC discovery document, so this must be the in-cluster
+        *discovery* endpoint. A bare host such as ``http://logto:3001`` makes
+        Logto answer with a redirect to its browser-only /unknown-session page,
+        which requests then follows and fails with ConnectionError.
+        """
+        base = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("SERVER_URL", "").rstrip("/")
+        if not base:
+            return ""
+        if base.endswith("/.well-known/openid-configuration"):
+            return base
+        return f"{base}/.well-known/openid-configuration"
 
     def get_default_scope(self):
         scope = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("SCOPE", "")
