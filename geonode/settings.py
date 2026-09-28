@@ -2050,8 +2050,10 @@ _LOGTO_SOCIALACCOUNT_PROVIDER = {
         "offline_access",
     ],
     "AUTH_PARAMS": {
-        "access_type": "online",
-        "prompt": "consent",
+        # Logto has no consent screen for a first-party confidential client.
+        # Sending prompt=consent makes the provider bounce the interaction to
+        # /unknown-session, which allauth then follows over HTTP and fails.
+        **({"prompt": os.environ["LOGTO_AUTH_PROMPT"]} if os.environ.get("LOGTO_AUTH_PROMPT") else {}),
     },
     "COMMON_FIELDS": {"email": "email", "last_name": "family_name", "first_name": "given_name"},
     "UID_FIELD": "sub",

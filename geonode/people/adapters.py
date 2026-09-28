@@ -356,11 +356,18 @@ class GenericOpenIDConnectAdapter(OAuth2Adapter, SocialAccountAdapter):
         if self.profile_url:
             try:
                 headers = {"Authorization": f"Bearer {token.token}"}
-                resp = requests.get(self.profile_url, headers=headers)
-                profile_data = resp.json()
-                extra_data.update(profile_data)
-            except Exception:
-                logger.exception(OAuth2Error("Invalid profile_url, falling back to id_token checks..."))
+                # Never follow redirects here. Logto answers a lost interaction
+                # with a 302 to its browser-only /unknown-session page, and
+                # following it from inside the container raises ConnectionError
+                # on localhost:3001 instead of a meaningful OAuth2Error.
+                resp = requests.get(self.profile_url, headers=headers, allow_redirects=False, timeout=10)
+                if resp.status_code != 200 or not resp.headers.get("content-type", "").startswith("application/json"):
+                    raise OAuth2Error(f"Unexpected userinfo response: HTTP {resp.status_code}")
+                extra_data.update(resp.json())
+            except OAuth2Error:
+                raise
+            except Exception as e:
+                raise OAuth2Error("Could not load the user profile from the OIDC provider") from e
         if "id_token" in response:
             try:
                 extra_data_id_token = jwt.decode(
