@@ -2050,10 +2050,16 @@ _LOGTO_SOCIALACCOUNT_PROVIDER = {
         "offline_access",
     ],
     "AUTH_PARAMS": {
-        # Logto has no consent screen for a first-party confidential client.
-        # Sending prompt=consent makes the provider bounce the interaction to
-        # /unknown-session, which allauth then follows over HTTP and fails.
-        **({"prompt": os.environ["LOGTO_AUTH_PROMPT"]} if os.environ.get("LOGTO_AUTH_PROMPT") else {}),
+        # "login" makes the provider show its sign-in form on every
+        # authorization request. Without it Logto reuses its SSO session and
+        # silently signs the previous account back in, so several accounts
+        # could never be used from the same browser. Set LOGTO_AUTH_PROMPT
+        # empty to fall back to Logto's single-sign-on behaviour.
+        #
+        # Do NOT use "consent" here: Logto has no consent screen for a
+        # first-party confidential client and answers with a redirect to its
+        # browser-only /unknown-session page.
+        **({"prompt": os.environ.get("LOGTO_AUTH_PROMPT", "login")} if os.environ.get("LOGTO_AUTH_PROMPT", "login") else {}),
     },
     "COMMON_FIELDS": {"email": "email", "last_name": "family_name", "first_name": "given_name"},
     "UID_FIELD": "sub",
