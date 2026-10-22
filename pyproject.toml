@@ -49,7 +49,7 @@ dependencies = [
 
     # Django Apps
     "django-allauth==65.18.0",
-    "django-appconf==1.0.6",
+    "django-appconf==1.2.0",
     "django-filter==24.2",
     "django-imagekit==5.0.0",
     "django-taggit==5.0.1",
